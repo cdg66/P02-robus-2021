@@ -8,57 +8,31 @@
         {
             "name": "PlatformIO",
             "includePath": [
-<<<<<<< Updated upstream
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/include",
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/src",
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/cores/arduino",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/variants/mega",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/HID/src",
-=======
-                "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/include",
-                "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/src",
-                "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-                "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-                "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-                "C:/Users/claud/.platformio/packages/framework-arduino-avr/cores/arduino",
-                "C:/Users/claud/.platformio/packages/framework-arduino-avr/variants/mega",
-                "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-                "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/HID/src",
->>>>>>> Stashed changes
+                "C:/Users/etien/OneDrive - USherbrooke/2021AUT/.Projet/P02-robus-2021/RobUS/include",
+                "C:/Users/etien/OneDrive - USherbrooke/2021AUT/.Projet/P02-robus-2021/RobUS/src",
+                "C:/Users/etien/OneDrive - USherbrooke/2021AUT/.Projet/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
+                "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                "C:/Users/etien/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "C:/Users/etien/.platformio/packages/framework-arduino-avr/variants/mega",
+                "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                 ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-<<<<<<< Updated upstream
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/include",
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/src",
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/cores/arduino",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/variants/mega",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/HID/src",
-=======
-                    "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/include",
-                    "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/src",
-                    "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-                    "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                    "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-                    "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-                    "C:/Users/claud/.platformio/packages/framework-arduino-avr/cores/arduino",
-                    "C:/Users/claud/.platformio/packages/framework-arduino-avr/variants/mega",
-                    "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-                    "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/HID/src",
->>>>>>> Stashed changes
+                    "C:/Users/etien/OneDrive - USherbrooke/2021AUT/.Projet/P02-robus-2021/RobUS/include",
+                    "C:/Users/etien/OneDrive - USherbrooke/2021AUT/.Projet/P02-robus-2021/RobUS/src",
+                    "C:/Users/etien/OneDrive - USherbrooke/2021AUT/.Projet/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
+                    "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    "C:/Users/etien/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "C:/Users/etien/.platformio/packages/framework-arduino-avr/variants/mega",
+                    "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "C:/Users/etien/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                     ""
                 ]
             },
@@ -73,11 +47,7 @@
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
-<<<<<<< Updated upstream
-            "compilerPath": "C:/Users/antoi/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
-=======
-            "compilerPath": "C:/Users/claud/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
->>>>>>> Stashed changes
+            "compilerPath": "C:/Users/etien/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
             "compilerArgs": [
                 "-mmcu=atmega2560",
                 ""
