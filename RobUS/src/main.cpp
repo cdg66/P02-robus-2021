@@ -1,6 +1,13 @@
 #include <librobus.h>
 #include <Arduino.h>
 #define VERSIONID "Version PID"
+
+
+#define PKP 1
+#define PKI 1
+#define PKD 0
+
+
 typedef  int32_t PID_Constant_Type;
 typedef struct _PID
 {
@@ -33,7 +40,7 @@ void loop() {
   int32_t LEnco;
   int32_t REnco;
   int i;
-  PID_Init( &PID_Right, 0.000009f ,0.0000003f, 0.0f, 100);
+  PID_Init( &PID_Right, PKP*0.000009f ,PKI*0.0000003f, PKD*0.0f, 100);
   //PID_SetGoal(&PID_Right, 10000);
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
@@ -55,15 +62,15 @@ void loop() {
   {
     delay(100);
     LEnco = ENCODER_Read(LEFT);
-    //Serial.print(LEnco);
-    //Serial.print('\n');
+    Serial.print(LEnco);
+    Serial.print('\n');
     REnco = ENCODER_Read(RIGHT);
-    //Serial.print(REnco);
-    //Serial.print('\n');
+    Serial.print(REnco);
+    Serial.print('\n');
     PID_SetGoal(&PID_Right, LEnco );
     SpeedAdjust = PID_Compute(&PID_Right, REnco);
-    //Serial.print(SpeedR);
-    //Serial.print('\n');
+    Serial.print(SpeedR);
+    Serial.print('\n');
     SpeedR = SpeedR + SpeedAdjust;
     MOTOR_SetSpeed(RIGHT, SpeedR);
     
