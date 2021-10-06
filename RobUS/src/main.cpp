@@ -17,6 +17,7 @@ typedef struct _PID
 } PID_Handler;
 void PID_Init(PID_Handler *PID, float ConstantP, float ConstantI, float ConstantD, PID_Constant_Type TimeBaseMs);
 void PID_SetGoal(PID_Handler *PID, PID_Constant_Type Goal);
+void PID_Reset(PID_Handler *PID);
 float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData );
 PID_Handler PID_Right;
 void setup() {
@@ -32,8 +33,6 @@ void loop() {
   int32_t LEnco;
   int32_t REnco;
   int i;
-  BoardInit();
-
   PID_Init( &PID_Right, 0.000009f ,0.0000003f, 0.0f, 100);
   //PID_SetGoal(&PID_Right, 10000);
   ENCODER_Reset(LEFT);
@@ -84,6 +83,10 @@ void PID_SetGoal(PID_Handler *PID, PID_Constant_Type Goal)
 {
     PID->Goal = Goal;
 };
+void PID_Reset(PID_Handler *PID)
+{
+  PID->LastPError = 0;
+}
 float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData )
 {
     float Output;
