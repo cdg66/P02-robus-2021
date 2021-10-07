@@ -27,8 +27,7 @@ void PID_Init(PID_Handler *PID, float ConstantP, float ConstantI, float Constant
 void PID_SetGoal(PID_Handler *PID, PID_Constant_Type Goal);
 void PID_Reset(PID_Handler *PID);
 float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData );
-void TOURNER_Droite(float angle);
-void TOURNER_Gauche(float angle);
+void tourner(float angle);
 PID_Handler PID_Right;
 void setup() {
   // put your setup code here, to run once:
@@ -112,30 +111,26 @@ float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData )
     return Output;
 };
 
-void TOURNER_Gauche(float angle)
+void tourner(float angle)
 {
   uint32_t clic = CLIC_DEGREE * angle;
-
   ENCODER_Reset(RIGHT);
+  ENCODER_Reset(LEFT);
   MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
+  if(angle<0)
+  {
   MOTOR_SetSpeed(RIGHT, 0.5);
 
   while(ENCODER_Read(RIGHT)<clic)
   {}
-  
-  MOTOR_SetSpeed(RIGHT, 0);
-}
-
-void TOURNER_Droite(float angle)
-{
-  uint32_t clic = CLIC_DEGREE * angle;
-
-  ENCODER_Reset(LEFT);
-  MOTOR_SetSpeed(RIGHT, 0);
+  }
+  else{
   MOTOR_SetSpeed(LEFT, 0.5);
 
   while(ENCODER_Read(LEFT)<clic)
   {}
-  
+  }
   MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
 }
