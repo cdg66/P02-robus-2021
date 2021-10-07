@@ -1,17 +1,18 @@
 #include <librobus.h>
 #include <Arduino.h>
+#include <math.h>
 #define VERSIONID "Version PID"
 
 
 /* #define PKP 1
 #define PKI 1
 #define PKD 0 */
-#define CLIC_DEGREE 44.444444444
-#define CLIC_MM 132.7
+#define CLIC_DEGREE 44
+#define CLIC_CM 133.67
 #define kp 0.0001
 #define ki 0.00002
 
-int total_G, total_D, erreur_1, pulse_G, pulse_D, erreur_vitesse, correction;
+int32_t total_G, total_D, erreur_1, pulse_G, pulse_D, erreur_vitesse, correction;
 
 
 /* typedef  int32_t PID_Constant_Type;
@@ -31,14 +32,48 @@ typedef struct _PID
 void PID_Init(PID_Handler *PID, float ConstantP, float ConstantI, float ConstantD, PID_Constant_Type TimeBaseMs);
 void PID_SetGoal(PID_Handler *PID, PID_Constant_Type Goal);
 void PID_Reset(PID_Handler *PID);
-float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData );
+float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData ); */
 void tourner(float angle);
 void avancer (float distance);
-PID_Handler PID_Right; */
+void u_turn();
+void PID();
+//PID_Handler PID_Right;
 void setup() {
   // put your setup code here, to run once:
   BoardInit();
-  avancer(1);
+  
+  avancer(210);
+  tourner(-90);
+  avancer(25);
+  tourner(90);
+  avancer(30);
+  tourner(90);
+  avancer(25);
+  tourner(-50);
+  avancer(50);
+  tourner(-90);
+  avancer(60);
+  tourner(45);
+  avancer(140);
+
+
+
+  u_turn();
+
+
+  avancer(140);
+  tourner(-45);
+  avancer(60);
+  tourner(90);
+  avancer(50);
+  tourner(50);
+  avancer(25);
+  tourner(-90);
+  avancer(30);
+  tourner(-90);
+  avancer(25);
+  tourner(90);
+  avancer(240);
 }
 
 void loop(){}
@@ -121,7 +156,7 @@ float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData )
 
 void tourner(float angle)
 {
-  uint32_t clic = CLIC_DEGREE * angle;
+  uint32_t clic = CLIC_DEGREE * abs(angle);
   ENCODER_Reset(RIGHT);
   ENCODER_Reset(LEFT);
   MOTOR_SetSpeed(LEFT, 0);
@@ -145,20 +180,22 @@ void tourner(float angle)
 
 void avancer(float distance)
 {
-  int32_t clics = distance*CLIC_MM;
-  ENCODER_ReadReset(LEFT);
-  ENCODER_ReadReset(RIGHT);  
+  int32_t clics = distance * CLIC_CM;
+  ENCODER_Reset(LEFT);
+  ENCODER_Reset(RIGHT);  
   MOTOR_SetSpeed(LEFT, 0.5);
-  MOTOR_SetSpeed(RIGHT, 0.475);
+  MOTOR_SetSpeed(RIGHT, 0.42);
   total_D=0;
   total_G=0;
-  delay(500);
   
   while(total_G < clics)
   {
-  PID();
-  delay(1000);
+    delay(100);
+    PID();
+   
   }
+  MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
 
 }
 
@@ -173,6 +210,18 @@ void PID ()
   erreur_vitesse = pulse_G -pulse_D;
   correction= kp*erreur_1+erreur_vitesse*ki;
   MOTOR_SetSpeed(RIGHT,(0.5+correction));
-  ENCODER_ReadReset(LEFT);
-  ENCODER_ReadReset(RIGHT);
+  ENCODER_Reset(LEFT);
+  ENCODER_Reset(RIGHT);
+}
+
+void u_turn()
+{
+  ENCODER_Reset(LEFT);
+  ENCODER_Reset(RIGHT);
+  MOTOR_SetSpeed(LEFT, -0.5);
+  MOTOR_SetSpeed(RIGHT, 0.5);
+
+  while(ENCODER_Read(RIGHT)<3650){}
+  MOTOR_SetSpeed(LEFT,0);
+  MOTOR_SetSpeed(RIGHT,0);
 }
