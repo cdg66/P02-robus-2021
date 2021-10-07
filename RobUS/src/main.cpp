@@ -3,13 +3,18 @@
 #define VERSIONID "Version PID"
 
 
-#define PKP 1
+/* #define PKP 1
 #define PKI 1
-#define PKD 0
+#define PKD 0 */
 #define CLIC_DEGREE 44.444444444
+#define CLIC_MM 132.7
+#define kp 0.0001
+#define ki 0.00002
+
+int total_G, total_D, erreur_1, pulse_G, pulse_D, erreur_vitesse, correction;
 
 
-typedef  int32_t PID_Constant_Type;
+/* typedef  int32_t PID_Constant_Type;
 typedef struct _PID
 {
     float Kp;
@@ -28,14 +33,17 @@ void PID_SetGoal(PID_Handler *PID, PID_Constant_Type Goal);
 void PID_Reset(PID_Handler *PID);
 float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData );
 void tourner(float angle);
-PID_Handler PID_Right;
+void avancer (float distance);
+PID_Handler PID_Right; */
 void setup() {
   // put your setup code here, to run once:
   BoardInit();
-  Serial.write(VERSIONID);
+  avancer(1);
 }
 
-void loop() {
+void loop(){}
+
+/* void loop() {
   // put your main code here, to run repeatedly:
    float SpeedAdjust = 0.0f;
   float SpeedR = 0.3f;
@@ -109,7 +117,7 @@ float PID_Compute(PID_Handler *PID, PID_Constant_Type InputData )
     PID->LastPError = PID->PError;
 
     return Output;
-};
+}; */
 
 void tourner(float angle)
 {
@@ -133,4 +141,38 @@ void tourner(float angle)
   }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
+}
+
+void avancer(float distance)
+{
+  int32_t clics = distance*CLIC_MM;
+  ENCODER_ReadReset(LEFT);
+  ENCODER_ReadReset(RIGHT);  
+  MOTOR_SetSpeed(LEFT, 0.5);
+  MOTOR_SetSpeed(RIGHT, 0.475);
+  total_D=0;
+  total_G=0;
+  delay(500);
+  
+  while(total_G < clics)
+  {
+  PID();
+  delay(1000);
+  }
+
+}
+
+void PID ()
+{
+  pulse_D=ENCODER_Read(RIGHT);
+  pulse_G=ENCODER_Read(LEFT);
+  
+  total_G += pulse_G; 
+  total_D += pulse_D;
+  erreur_1 = total_G - total_D;
+  erreur_vitesse = pulse_G -pulse_D;
+  correction= kp*erreur_1+erreur_vitesse*ki;
+  MOTOR_SetSpeed(RIGHT,(0.5+correction));
+  ENCODER_ReadReset(LEFT);
+  ENCODER_ReadReset(RIGHT);
 }
