@@ -5,7 +5,7 @@
 
 
 #define CLIC_DEGREE 44
-#define CLIC_CM 133.67
+#define CLIC_CM 133.4
 #define kp 0.0001
 #define ki 0.00002
 
@@ -19,39 +19,33 @@ void PID();
 
 void setup() {
   BoardInit();
-  
-  avancer(210);
-  tourner(-90);
-  avancer(25);
-  tourner(90);
-  avancer(30);
-  tourner(90);
-  avancer(25);
-  tourner(-50);
+
+/* avancer(200);
+
+u_turn();
+
+avancer(200); */
+
+  avancer(120);
+  tourner(-43);
   avancer(50);
-  tourner(-90);
+  tourner(47);
+  avancer(100);
   avancer(60);
   tourner(45);
-  avancer(140);
+  avancer(63);
+  tourner(-43);
+  avancer(120);
 
-
-
+  delay(500);
   u_turn();
+  delay(500);
 
-
-  avancer(140);
-  tourner(-45);
-  avancer(60);
-  tourner(90);
-  avancer(50);
-  tourner(50);
-  avancer(25);
-  tourner(-90);
-  avancer(30);
-  tourner(-90);
-  avancer(25);
-  tourner(90);
-  avancer(240);
+  avancer(110);
+  avancer(100);
+  avancer(100);
+  avancer(100);
+  avancer(100);
 }
 
 void loop(){}
@@ -86,7 +80,7 @@ void avancer(float distance)
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);  
   MOTOR_SetSpeed(LEFT, 0.5);
-  MOTOR_SetSpeed(RIGHT, 0.42);
+  MOTOR_SetSpeed(RIGHT, 0.45);
   total_D=0;
   total_G=0;
   
@@ -98,7 +92,6 @@ void avancer(float distance)
   }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
-
 }
 
 void PID ()
@@ -111,7 +104,7 @@ void PID ()
   erreur_1 = total_G - total_D;
   erreur_vitesse = pulse_G -pulse_D;
   correction= kp*erreur_1+erreur_vitesse*ki;
-  MOTOR_SetSpeed(RIGHT,(0.5+correction));
+  MOTOR_SetSpeed(RIGHT,(0.49+correction));
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
 }
