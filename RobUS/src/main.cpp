@@ -1,7 +1,7 @@
 #include <librobus.h>
 #include <Arduino.h>
 #include <math.h>
-#define VERSIONID "Version PID"
+#define VERSIONID "Version capteurs"
 
 
 #define CLIC_DEGREE 44
@@ -9,8 +9,8 @@
 #define KP 0.0001
 #define KI 0.00002
 
-int32_t totalG, totalD, erreur1, pulseG, pulseD, erreurVitesse, correction;
-
+// value of encoder needed for avancer()
+int32_t totalG, totalD;
 
 void tourner(float angle);
 void avancer (float distance);
@@ -26,7 +26,7 @@ u_turn();
 
 avancer(200); */
 
-  avancer(120);
+/*   avancer(120);
   tourner(-43);
   avancer(50);
   tourner(47);
@@ -45,11 +45,26 @@ avancer(200); */
   avancer(100);
   avancer(100);
   avancer(100);
-  avancer(100);
+  avancer(100); */
 }
 
 void loop(){}
-
+/*------------------------------------------------- tourner ----------
+|  Function tourner
+|
+|  Purpose:  Make RobUS do a turn on himself with only one weel active
+|
+|  Parameters:
+|     type float 
+|          angle(IN) angle of witch the robot need to face after his turn
+|          give a negative value to turn left and a positive one to
+|          turn right.
+|
+|  Constant : 
+|     CLIC_DEGREE: Number of encoder pulse for 1 degrees of turn.
+|  Dependency : LibRobUS
+|  Returns:  nothing
+*-------------------------------------------------------------------*/
 void tourner(float angle)
 {
   uint32_t clic = CLIC_DEGREE * abs(angle);
@@ -73,7 +88,21 @@ void tourner(float angle)
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
 }
-
+/*------------------------------------------------- avancer ----------
+|  Function avancer
+|
+|  Purpose:  Make RobUS move forward to a fixed distance
+|
+|  Parameters:
+|     type float 
+|          distance(IN) distance in centimeter (cm) with the robot need
+|          to move.
+|
+|  Constant :
+|     CLIC_CM: number of pulse of the encoder for one cm forward
+|  Dependency : LibRobUS
+|  Returns:  nothing
+*-------------------------------------------------------------------*/
 void avancer(float distance)
 {
   int32_t clics = distance * CLIC_CM;
@@ -93,9 +122,27 @@ void avancer(float distance)
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
 }
-
+/*------------------------------------------------- pid ---------------
+|  Function pid
+|
+|  Purpose:  feedback loop for the motor speed
+|
+|  Parameters: nothing
+|  Constant :
+|       KP : Multiplicative constant of the proportional factor need to 
+|            be set by the user.
+|       KI : Multiplicative constant of the Integral factor need to 
+|            be set by the user.
+|  Variables :
+| 
+|  Dependency : LibRobUS
+|       
+|  Returns:    nothing
+*-------------------------------------------------------------------*/
 void pid()
 {
+  int32_t erreur1, pulseG, pulseD, erreurVitesse, correction;
+
   pulseD=ENCODER_Read(RIGHT);
   pulseG=ENCODER_Read(LEFT);
   
@@ -108,7 +155,16 @@ void pid()
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
 }
-
+/*------------------------------------------------- uTurn ---------------
+|  Function uTurn
+|
+|  Purpose:  make robUS do a full 180 degree.
+|
+|  Parameters: nothing
+|  Constant :  nothing
+|  Dependency : LibRobUS
+|  Returns:    nothing
+*-------------------------------------------------------------------*/
 void uTurn()
 {
   ENCODER_Reset(LEFT);
