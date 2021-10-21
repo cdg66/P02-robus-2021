@@ -20,32 +20,7 @@ void pid();
 void setup() {
   BoardInit();
 
-/* avancer(200);
 
-u_turn();
-
-avancer(200); */
-
-  avancer(120);
-  tourner(-43);
-  avancer(50);
-  tourner(47);
-  avancer(100);
-  avancer(60);
-  tourner(45);
-  avancer(63);
-  tourner(-43);
-  avancer(120);
-
-  delay(500);
-  uTurn();
-  delay(500);
-
-  avancer(110);
-  avancer(100);
-  avancer(100);
-  avancer(100);
-  avancer(100);
 }
 
 void loop(){}
