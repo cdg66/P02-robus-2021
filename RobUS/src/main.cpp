@@ -9,6 +9,12 @@
 #define KP 0.0001
 #define KI 0.00002
 
+
+float valeurSonar;
+
+
+
+
 // value of encoder needed for avancer()
 int32_t totalG, totalD;
 
@@ -16,12 +22,12 @@ void tourner(float angle);
 void avancer (float distance);
 void uTurn();
 void pid();
+void getSonarRange();
 
 void setup() {
   BoardInit();
-
-/* avancer(200);
-
+  avancer(2000);
+/*
 u_turn();
 
 avancer(200); */
@@ -48,7 +54,8 @@ avancer(200); */
   avancer(100); */
 }
 
-void loop(){}
+void loop(){
+}
 /*------------------------------------------------- tourner ----------
 |  Function tourner
 |
@@ -105,6 +112,11 @@ void tourner(float angle)
 *-------------------------------------------------------------------*/
 void avancer(float distance)
 {
+  float distanceMur = 15.0;
+  
+
+  
+  
   int32_t clics = distance * CLIC_CM;
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);  
@@ -113,14 +125,29 @@ void avancer(float distance)
   totalD=0;
   totalG=0;
   
-  while(totalG < clics)
+  while((totalG < clics)&&(SONAR_GetRange(1) > distanceMur))
   {
+    //while(SONAR_GetRange(1) > distanceMur)
+    //{
+    Serial.println(SONAR_GetRange(1));
     delay(100);
     pid();
+    //}
+
    
   }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
+ 
+}
+
+void getSonarRange()
+{
+  valeurSonar = SONAR_GetRange(1);
+
+  Serial.println(valeurSonar);
+  
+  delay(100);
 }
 /*------------------------------------------------- pid ---------------
 |  Function pid
