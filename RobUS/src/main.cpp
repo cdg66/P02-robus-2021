@@ -20,6 +20,22 @@ void pid();
 void setup() {
   BoardInit();
 
+/* déposer la balle:
+
+idée
+
+étape #1: faire une fonction qui renvoie un chiffre, 0, 1 ou 2 
+      après avoir détecté la couleur.
+
+étape #2: selon ce chiffre, faire trois fonctions: aller_(bleu, jaune, ou rouge)
+*/
+
+//détecter la couleur
+//allumer DEL de la couleur détecter
+avancer() //jusqu'au ballon
+//prendre ballon
+//aller à la bonne couleur
+//lâcher ballon
 
 }
 
