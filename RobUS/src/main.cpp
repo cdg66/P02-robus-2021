@@ -22,7 +22,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define CLIC_DEGREE 44
 #define CLIC_CM 133.4
 #define KP 0.0001
-#define KI 0.00002
+#define KI 0.00002*0
 
 // define pour les servo
 #define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
@@ -40,6 +40,7 @@ float valeurSonar;
 
 // value of encoder needed for avancer() and pid()
 int32_t totalG, totalD;
+float vitesseD = 0.50;
 // prototype de fonctions
 
 
@@ -64,7 +65,7 @@ void setup() {
   Serial.write(VERSIONID);
   MagSensor_Init();
   SERVO_Init(&pwm);
-
+  avancer(200);
 }
 
 void loop()
@@ -150,13 +151,17 @@ void avancer(float distance)
 
   int32_t clics = distance * CLIC_CM;
   ENCODER_Reset(LEFT);
-  ENCODER_Reset(RIGHT);  
+  ENCODER_Reset(RIGHT);
+  MOTOR_SetSpeed(RIGHT, vitesseD); 
   MOTOR_SetSpeed(LEFT, 0.5);
-  MOTOR_SetSpeed(RIGHT, 0.45);
+  
   totalD=0;
   totalG=0;
-
-  pid();
+  while(totalG < clics)
+  {
+    delay(100);
+    pid();
+  }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
    
@@ -194,19 +199,21 @@ void getSonarRange()
 *-------------------------------------------------------------------*/
 void pid()
 {
-  int32_t erreur1, pulseG, pulseD, erreurVitesse, correction;
+  int32_t erreurP, erreurI , pulseG, pulseD, Correction;
 
-  pulseD=ENCODER_Read(RIGHT);
-  pulseG=ENCODER_Read(LEFT);
+  pulseD=ENCODER_ReadReset(RIGHT);
+  pulseG=ENCODER_ReadReset(LEFT);
   
   totalG += pulseG; 
   totalD += pulseD;
-  erreur1 = totalG - totalD;
-  erreurVitesse = pulseG -pulseD;
-  correction= KP*erreur1+erreurVitesse*KI;
-  MOTOR_SetSpeed(RIGHT,(0.49+correction));
+  erreurP = pulseG - pulseD;
+  erreurI = totalG -totalD;
+  Correction = (erreurP*KP) + (erreurI*KI);
+  vitesseD = vitesseD + Correction;
+  MOTOR_SetSpeed(RIGHT,vitesseD);
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
+
 }
 /*------------------------------------------------- uTurn ---------------
 |  Function uTurn
