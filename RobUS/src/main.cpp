@@ -22,7 +22,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define CLIC_DEGREE 44
 #define CLIC_CM 133.4
 #define KP 0.0001
-#define KI 0.00002*0
+#define KI 0.00002
 
 // define pour les servo
 #define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
