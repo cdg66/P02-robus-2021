@@ -84,7 +84,8 @@ void loop()
   Serial.print(VectorArray[3],5);
   Serial.print(" \n\r"); 
 */
-  //getSonarRange();
+  Serial.println(getSonarRange(0));
+  Serial.println(getSonarRange(8));
   Serial.println(getIrRange(0));
   Serial.println(getIrRange(9));
 
@@ -154,14 +155,6 @@ void avancer(float distance)
   MOTOR_SetSpeed(RIGHT, 0.45);
   totalD=0;
   totalG=0;
-
-  // float distanceMur = 15.0;
-  // while((totalG < clics)&&(SONAR_GetRange(1) > distanceMur))
-  // {   
-  //   Serial.println(SONAR_GetRange(1));
-  //   delay(100);
-  //   pid();
-  // }
 
   pid();
   MOTOR_SetSpeed(LEFT, 0);
@@ -344,7 +337,7 @@ void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulsel
   }
   pwm->setPWM(ServoID,pulselen , 0);
 }
-/*------------------------------------------------- getIrRange ---------------
+/*------------------------------------------------- getSonarRange ---------------
 |  Function getSonarRange
 |
 |  Purpose:  Get the range of the specified sonar sensor
@@ -354,12 +347,12 @@ void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulsel
 |       Nothing
 |  Variables :
 | 
-|  Dependency : LibRobUS
+|  Dependency : LibRobUS 
 |       
 |  Returns:    Distance in cm ( float )
 *-------------------------------------------------------------------*/
 float getSonarRange(int idSensor) {
-  if((idSensor <= 3) && (idSensor >= 0)) {
+  if((idSensor <= 1) && (idSensor >= 0)) {
     return SONAR_GetRange(idSensor);
   }
   return 0;
@@ -374,7 +367,7 @@ float getSonarRange(int idSensor) {
 |       Nothing
 |  Variables :
 | 
-|  Dependency : LibRobUS
+|  Dependency : LibRobUS (https://swanrobotics.com/projects/gp2d12_project/) <== reasoning 
 |       
 |  Returns:    Distance in cm ( float )
 *-------------------------------------------------------------------*/
