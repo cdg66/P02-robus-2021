@@ -48,8 +48,9 @@ void avancer (float distance);
 void uTurn();
 void pid();
 //fonction Sonar
-void getSonarRange();
-
+float getSonarRange(int idSensor);
+// fonctions infrarouges
+float getIrRange(int idSensor);
 // fonction senseur magnetique
 void MagSensor_GetData(float VectorArray[3]);
 void MagSensor_Init(void);
@@ -68,6 +69,7 @@ void setup() {
 
 void loop()
 {
+/*
   float VectorArray[3];
   MagSensor_GetData(VectorArray);
   Serial.print("X:");
@@ -81,10 +83,12 @@ void loop()
   Serial.print("Z:");
   Serial.print(VectorArray[3],5);
   Serial.print(" \n\r"); 
+*/
+  //getSonarRange();
+  Serial.println(getIrRange(0));
+  Serial.println(getIrRange(9));
 
-  getSonarRange();
-  
-  delay(1000);
+  delay(100);
 }
 /*------------------------------------------------- tourner ----------
 |  Function tourner
@@ -173,6 +177,7 @@ void getSonarRange()
   
   //delay(100);
 }
+
 
 //void testArretForce(){
 
@@ -338,4 +343,44 @@ void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulsel
     pulselen = 4096;
   }
   pwm->setPWM(ServoID,pulselen , 0);
+}
+/*------------------------------------------------- getIrRange ---------------
+|  Function getSonarRange
+|
+|  Purpose:  Get the range of the specified sonar sensor
+|
+|  Parameters: ID of sonar sensor ( int ) where id => { 0 , 1 }
+|  Constant :
+|       Nothing
+|  Variables :
+| 
+|  Dependency : LibRobUS
+|       
+|  Returns:    Distance in cm ( float )
+*-------------------------------------------------------------------*/
+float getSonarRange(int idSensor) {
+  if((idSensor <= 3) && (idSensor >= 0)) {
+    return SONAR_GetRange(idSensor);
+  }
+  return 0;
+}
+/*------------------------------------------------- getIrRange ---------------
+|  Function getIrRange
+|
+|  Purpose:  Get the range of the specified ir sensor, then calculate its value in cm
+|
+|  Parameters: ID of sensor ( int ) where id => { 0 , 1 , 2 , 3 }
+|  Constant :
+|       Nothing
+|  Variables :
+| 
+|  Dependency : LibRobUS
+|       
+|  Returns:    Distance in cm ( float )
+*-------------------------------------------------------------------*/
+float getIrRange(int idSensor) {
+  if((idSensor <=3) && (idSensor >= 0)) {
+    return ((6787.0 / (ROBUS_ReadIR(idSensor) - 3.0)) - 4.0);
+  }
+  return 0;
 }
