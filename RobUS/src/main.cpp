@@ -38,11 +38,9 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 float valeurSonar;
 
 
-
-
 // value of encoder needed for avancer() and pid()
 int32_t totalG, totalD;
-// protoype de fonctions
+// prototype de fonctions
 
 
 void tourner(float angle);
@@ -65,33 +63,6 @@ void setup() {
   Serial.write(VERSIONID);
   MagSensor_Init();
   SERVO_Init(&pwm);
-/* avancer(200);
-
-u_turn();
-
-avancer(200); */
-
-/*   avancer(120);
-  tourner(-43);
-  avancer(50);
-  tourner(47);
-  avancer(100);
-  avancer(60);
-  tourner(45);
-  avancer(63);
-  tourner(-43);
-  avancer(120);
-
-  delay(500);
-  uTurn();
-  delay(500);
-
-  avancer(110);
-  avancer(100);
-  avancer(100);
-  avancer(100);
-  avancer(100); */
-
 
 }
 
@@ -110,6 +81,9 @@ void loop()
   Serial.print("Z:");
   Serial.print(VectorArray[3],5);
   Serial.print(" \n\r"); 
+
+  getSonarRange();
+  
   delay(1000);
 }
 /*------------------------------------------------- tourner ----------
@@ -168,10 +142,6 @@ void tourner(float angle)
 *-------------------------------------------------------------------*/
 void avancer(float distance)
 {
-  float distanceMur = 15.0;
-
-
-
 
   int32_t clics = distance * CLIC_CM;
   ENCODER_Reset(LEFT);
@@ -180,18 +150,16 @@ void avancer(float distance)
   MOTOR_SetSpeed(RIGHT, 0.45);
   totalD=0;
   totalG=0;
-  
-  while((totalG < clics)&&(SONAR_GetRange(1) > distanceMur))
-  {   
-    //while(SONAR_GetRange(1) > distanceMur)
-    //{
-    Serial.println(SONAR_GetRange(1));
-    delay(100);
-    pid();
-    //}
-   
 
-  }
+  // float distanceMur = 15.0;
+  // while((totalG < clics)&&(SONAR_GetRange(1) > distanceMur))
+  // {   
+  //   Serial.println(SONAR_GetRange(1));
+  //   delay(100);
+  //   pid();
+  // }
+
+  pid();
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
    
@@ -203,8 +171,12 @@ void getSonarRange()
 
   Serial.println(valeurSonar);
   
-  delay(100);
+  //delay(100);
 }
+
+//void testArretForce(){
+
+//}
 /*------------------------------------------------- pid ---------------
 |  Function pid
 |
