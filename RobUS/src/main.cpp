@@ -21,7 +21,7 @@ Pour les ajouter dans votre projet sur PIO Home
 
 #define CLIC_DEGREE 44
 #define CLIC_CM 133.4
-#define KP 0.0001
+#define KP 0.0001    // teste avec le robot A OK
 #define KI 0.00002
 
 // define pour les servo
@@ -30,6 +30,17 @@ Pour les ajouter dans votre projet sur PIO Home
 #define USMIN  600 // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
 #define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
+// define pour les callbacks
+#define ID_PID 1
+#define ID_2 2
+#define ID_3 3
+#define ID_4 4
+#define ID_5 5
+#define ID_6 6
+#define ID_7 7
+#define ID_8 8
+#define ID_9 9
+#define ID_10 10
 
 // objet pour le Mag sensor
 Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
@@ -43,11 +54,12 @@ int32_t totalG, totalD;
 float vitesseD = 0.50;
 // prototype de fonctions
 
-
+// mouvements
 void tourner(float angle);
 void avancer (float distance);
 void uTurn();
 void pid();
+void pidReset();
 //fonction Sonar
 float getSonarRange(int idSensor);
 // fonctions infrarouges
@@ -65,11 +77,17 @@ void setup() {
   Serial.write(VERSIONID);
   MagSensor_Init();
   SERVO_Init(&pwm);
-  avancer(200);
+  // init pid
+  SOFT_TIMER_SetCallback(ID_PID, &pid);
+  SOFT_TIMER_SetDelay(ID_PID, 100);
+  SOFT_TIMER_SetRepetition(ID_PID, -1);
+  
 }
 
 void loop()
 {
+   avancer(200);
+   SOFT_TIMER_Update();
 /*
   float VectorArray[3];
   MagSensor_GetData(VectorArray);
@@ -157,14 +175,15 @@ void avancer(float distance)
   
   totalD=0;
   totalG=0;
+  SOFT_TIMER_Enable(ID_PID);
   while(totalG < clics)
   {
-    delay(100);
-    pid();
+    SOFT_TIMER_Update();
   }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
-   
+  SOFT_TIMER_Disable(ID_PID);
+  pidReset();
 }
 
 void getSonarRange()
@@ -199,7 +218,7 @@ void getSonarRange()
 *-------------------------------------------------------------------*/
 void pid()
 {
-  int32_t erreurP, erreurI , pulseG, pulseD, Correction;
+  static int32_t erreurP, erreurI , pulseG, pulseD, Correction;
 
   pulseD=ENCODER_ReadReset(RIGHT);
   pulseG=ENCODER_ReadReset(LEFT);
@@ -214,6 +233,25 @@ void pid()
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
 
+}
+/*------------------------------------------------- pid ---------------
+|  Function pid
+|
+|  Purpose:  reset pid values
+|
+|  Parameters: nothing
+|  Constant : nothing
+|  Variables :
+| 
+|  Dependency : LibRobUS
+|       
+|  Returns:    nothing
+*-------------------------------------------------------------------*/
+void pidReset()
+{
+  totalG = 0;
+  totalD = 0;
+  vitesseD = 0.50;
 }
 /*------------------------------------------------- uTurn ---------------
 |  Function uTurn
@@ -323,7 +361,7 @@ void SERVO_setServoPulse(Adafruit_PWMServoDriver *pwm, uint8_t n, double pulse)
 |  Function SERVO_Init
 |
 |  Purpose:  set le PWM pour un channel (0 a 15) le pulse pour faire 
-|            nouger le servo
+|            bouger le servo
 |
 |  Parameters: objet pwm (&pwm);
 |              ServoID le channel sur lequel le pwm va s'appliquer (0 a 15) plus haut que ca la fonction ne fera rien
@@ -344,7 +382,7 @@ void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulsel
   }
   pwm->setPWM(ServoID,pulselen , 0);
 }
-/*------------------------------------------------- getSonarRange ---------------
+/*------------------------------------------------- getSonarRange ---
 |  Function getSonarRange
 |
 |  Purpose:  Get the range of the specified sonar sensor
@@ -364,7 +402,7 @@ float getSonarRange(int idSensor) {
   }
   return 0;
 }
-/*------------------------------------------------- getIrRange ---------------
+/*------------------------------------------------- getIrRange ------
 |  Function getIrRange
 |
 |  Purpose:  Get the range of the specified ir sensor, then calculate its value in cm
@@ -375,8 +413,16 @@ float getSonarRange(int idSensor) {
 |  Variables :
 | 
 |  Dependency : LibRobUS (https://swanrobotics.com/projects/gp2d12_project/) <== reasoning 
-|       
-|  Returns:    Distance in cm ( float )
+|                        (https://wiki.wpi.edu/images/images/1/13/Linearizing_Sharp_ranger_data.pdf)
+|  Returns:    Distance in cm ( float ) 
+|              Warning! It is the user responsbility
+|              to verify the data integrity returned by the function.
+|              Between 8 and 30 cm the data is accurate. 
+|              Under the minimun
+|              distance the value returned will be higer that actual.
+|              Over 30 cm the data may be negative (ex.:-2335)
+|              If the wrong idSensor is inputed the output will be 0. 
+|              
 *-------------------------------------------------------------------*/
 float getIrRange(int idSensor) {
   if((idSensor <=3) && (idSensor >= 0)) {
