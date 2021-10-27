@@ -71,6 +71,11 @@ void MagSensor_Init(void);
 void SERVO_Init(Adafruit_PWMServoDriver *pwm);
 void SERVO_setServoPulse(Adafruit_PWMServoDriver *pwm, uint8_t n, double pulse);
 void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulselen);
+void aller_bleu();
+void aller_jaune();
+void aller_rouge();
+//fonction détecter couleur. elle renvoie 0 (bleu), 1 (rouge), 2 (jaune).
+
 
 void setup() {
   BoardInit();
@@ -83,6 +88,7 @@ void setup() {
   SOFT_TIMER_SetRepetition(ID_PID, -1);
   
 }
+
 
 void loop()
 {
@@ -109,6 +115,73 @@ void loop()
   Serial.println(getIrRange(9));
 
   delay(100);
+  /* déposer la balle:
+
+idée
+
+étape #1: faire une fonction qui renvoie un chiffre, 0, 1 ou 2 
+      après avoir détecté la couleur.
+
+étape #2: selon ce chiffre, faire trois fonctions: aller_(bleu, jaune, ou rouge)
+
+
+détecter la couleur
+allumer DEL de la couleur détecter
+jusqu'au ballon
+prendre ballon
+aller à la bonne couleur
+lâcher ballon */
+
+//fonction touver_couleur
+
+if(trouver_couleur==0)
+{
+  aller_bleu();
+}
+else if(trouver_couleur==1)
+{
+  aller_rouge();
+}
+else
+{
+  aller_jaune();
+}
+  
+}
+void aller_bleu()
+{
+  //allumer DEL bleu
+  avancer(40);
+  //prendre baller avec servos moteurs
+  tourner(-90);
+  avancer(70);
+  tourner(90);
+  avancer(225); //jusqu'à la case bleue
+  //lâcher la balle
+
+}
+
+void aller_rouge()
+{
+  //allumer DEL rouge
+  avancer(40);
+  //prendre balle avec servos moteurs
+  avancer(225); //jusqu'à la case rouge
+  //lâcher balle
+
+}
+
+void aller_jaune()
+{
+  //allumer DEL jaune
+   avancer(40);
+  //prendre balle avec servos moteurs
+  tourner(90);
+  avancer(70);
+  tourner(-90);
+  avancer(225); //jusqu'à la case jaune
+  //lâcher balle
+
 }
 /*------------------------------------------------- tourner ----------
 |  Function tourner
