@@ -16,39 +16,89 @@ void tourner(float angle);
 void avancer (float distance);
 void uTurn();
 void pid();
+void aller_bleu();
+void aller_jaune();
+void aller_rouge();
+//fonction détecter couleur. elle renvoie 0 (bleu), 1 (rouge), 2 (jaune).
 
 void setup() {
   BoardInit();
 
-/* avancer(200);
+/* déposer la balle:
 
-u_turn();
+idée
 
-avancer(200); */
+étape #1: faire une fonction qui renvoie un chiffre, 0, 1 ou 2 
+      après avoir détecté la couleur.
 
-  avancer(120);
-  tourner(-43);
-  avancer(50);
-  tourner(47);
-  avancer(100);
-  avancer(60);
-  tourner(45);
-  avancer(63);
-  tourner(-43);
-  avancer(120);
+étape #2: selon ce chiffre, faire trois fonctions: aller_(bleu, jaune, ou rouge)
 
-  delay(500);
-  uTurn();
-  delay(500);
 
-  avancer(110);
-  avancer(100);
-  avancer(100);
-  avancer(100);
-  avancer(100);
+détecter la couleur
+allumer DEL de la couleur détecter
+jusqu'au ballon
+prendre ballon
+aller à la bonne couleur
+lâcher ballon */
+
+//fonction touver_couleur
+
+if(trouver_couleur==0)
+{
+  aller_bleu();
+}
+else if(trouver_couleur==1)
+{
+  aller_rouge();
+}
+else
+{
+  aller_jaune();
+}
+
+
+
+
+
 }
 
 void loop(){}
+
+void aller_bleu()
+{
+  //allumer DEL bleu
+  avancer(40);
+  //prendre baller avec servos moteurs
+  tourner(-90);
+  avancer(70);
+  tourner(90);
+  avancer(225); //jusqu'à la case bleue
+  //lâcher la balle
+
+}
+
+void aller_rouge()
+{
+  //allumer DEL rouge
+  avancer(40);
+  //prendre balle avec servos moteurs
+  avancer(225); //jusqu'à la case rouge
+  //lâcher balle
+
+}
+
+void aller_jaune()
+{
+  //allumer DEL jaune
+   avancer(40);
+  //prendre balle avec servos moteurs
+  tourner(90);
+  avancer(70);
+  tourner(-90);
+  avancer(225); //jusqu'à la case jaune
+  //lâcher balle
+
+}
 
 void tourner(float angle)
 {
