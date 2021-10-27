@@ -133,20 +133,20 @@ aller à la bonne couleur
 lâcher ballon */
 
 //fonction touver_couleur
-
-if(trouver_couleur==0)
-{
-  aller_bleu();
-}
-else if(trouver_couleur==1)
-{
-  aller_rouge();
-}
-else
-{
-  aller_jaune();
-}
-  
+/* 
+  if(trouver_couleur==0)
+  {
+    aller_bleu();
+  }
+  else if(trouver_couleur==1)
+  {
+    aller_rouge();
+  }
+  else
+  {
+    aller_jaune();
+  }
+   */
 }
 void aller_bleu()
 {
