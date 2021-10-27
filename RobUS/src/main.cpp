@@ -147,6 +147,7 @@ lâcher ballon */
     aller_jaune();
   }
    */
+
 }
 void aller_bleu()
 {
