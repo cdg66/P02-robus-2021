@@ -3,6 +3,8 @@
 #include <math.h>
 #include <Tlv493d.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <string.h>
+#include <SoftwareSerial.h>
 #define VERSIONID "Version capteurs"
 /* 
 Avant de compiler ajouter les librairies:
@@ -87,6 +89,25 @@ void followLineInit();
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
+
+  //SoftwareSerial BTSerial(16,17);
+  Serial2.begin(115200);
+  //BTSerial.begin(115200);
+
+  while(true)
+  {
+    delay(1000);
+    Serial.println(Serial2.read());
+    //Serial2.write('a');
+    //Serial.print('y');
+  }
+  /* BluetoothInit();
+  while(true){
+  String str = BLUETOOTH_read();
+  delay(200);
+  Serial.print(str);
+  } */
+
   MagSensor_Init();
   SERVO_Init(&pwm);
   followLineInit();
