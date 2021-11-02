@@ -41,6 +41,10 @@ Pour les ajouter dans votre projet sur PIO Home
 #define ID_8 8
 #define ID_9 9
 #define ID_10 10
+// define pour les pins du arduino
+#define PIN_FOLLOW_RED 37
+#define PIN_FOLLOW_YELLOW 38
+#define PIN_FOLLOW_BLUE 39
 
 // objet pour le Mag sensor
 Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
@@ -76,12 +80,16 @@ void aller_jaune();
 void aller_rouge();
 //fonction détecter couleur. elle renvoie 0 (bleu), 1 (rouge), 2 (jaune).
 
+// fonctions pour suiveur de ligne
+char getFollowLineValue();
+void followLineInit();
 
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
   MagSensor_Init();
   SERVO_Init(&pwm);
+  followLineInit();
   // init pid
   SOFT_TIMER_SetCallback(ID_PID, &pid);
   SOFT_TIMER_SetDelay(ID_PID, 100);
@@ -92,7 +100,7 @@ void setup() {
 
 void loop()
 {
-   avancer(200);
+   //avancer(200);
    SOFT_TIMER_Update();
 /*
   float VectorArray[3];
@@ -109,12 +117,9 @@ void loop()
   Serial.print(VectorArray[3],5);
   Serial.print(" \n\r"); 
 */
-  Serial.println(getSonarRange(0));
-  Serial.println(getSonarRange(8));
-  Serial.println(getIrRange(0));
-  Serial.println(getIrRange(9));
-
-  delay(100);
+  Serial.print(getFollowLineValue(), HEX );
+  Serial.print("\n");
+  delay(500);
   /* déposer la balle:
 
 idée
@@ -503,4 +508,60 @@ float getIrRange(int idSensor) {
     return ((6787.0 / (ROBUS_ReadIR(idSensor) - 3.0)) - 4.0);
   }
   return 0;
+}
+/*------------------------------------------------- getFollowLineValue ------
+|  Function getFollowLineValue
+|
+|  Purpose:  Get the value returned from the follow line sensor by taking the value of each sensor ( 3 sensors return 3 values => 1 , 2 , 4. then those are added together to form a number from 0 to 7 )
+|
+|  Parameters: None
+|  Constant :
+|       Nothing
+|  Variables : Can change the value of the sensor pins in the #define 
+| 
+|  Dependency : Arduino ( digitalRead())
+|  Returns:    value of sensors where
+|               1 = blue
+|               2 = yellow
+|               3 = blue & yellow
+|               4 = red
+|               5 = blue & red
+|               6 = yellow & red
+|               7 = blue & yellow & red
+*-------------------------------------------------------------------*/
+char getFollowLineValue() {
+  int i;
+  char valuePin, tempValue;
+  for (i = 0; i < 3; i++)
+  {
+    tempValue = digitalRead(37 + i);
+    valuePin = valuePin << 1;
+    valuePin += tempValue;
+  }
+  return valuePin;
+}
+/*------------------------------------------------- followLineInit ------
+|  Function followLineInit
+|
+|  Purpose:  
+|
+|  Parameters: None
+|  Constant :
+|       Nothing
+|  Variables : Can change the value of the sensor pins in the #define 
+| 
+|  Dependency : Arduino ( digitalRead())
+|  Returns:    value of sensors where
+|               1 = blue
+|               2 = yellow
+|               3 = blue & yellow
+|               4 = red
+|               5 = blue & red
+|               6 = yellow & red
+|               7 = blue & yellow & red
+*-------------------------------------------------------------------*/
+void followLineInit() {
+  pinMode(PIN_FOLLOW_RED, INPUT);
+  pinMode(PIN_FOLLOW_YELLOW, INPUT);
+  pinMode(PIN_FOLLOW_BLUE, INPUT);
 }
