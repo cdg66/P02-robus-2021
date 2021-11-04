@@ -34,7 +34,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 // define pour les callbacks
 #define ID_PID 1
-#define ID_2 2
+#define ID_SUIVEURDELIGNE 2
 #define ID_3 3
 #define ID_4 4
 #define ID_5 5
@@ -83,24 +83,25 @@ void aller_rouge();
 //fonction détecter couleur. elle renvoie 0 (bleu), 1 (rouge), 2 (jaune).
 
 // fonctions pour suiveur de ligne
-char getFollowLineValue();
 void followLineInit();
+uint8_t getFollowLineValue();
+void followLineCallback(void);
 
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
 
   //SoftwareSerial BTSerial(16,17);
-  Serial2.begin(115200);
+  //Serial2.begin(115200);
   //BTSerial.begin(115200);
 
-  while(true)
-  {
-    delay(1000);
-    Serial.println(Serial2.read());
+  //while(true)
+  //{
+  //  delay(1000);
+  //  Serial.println(Serial2.read());
     //Serial2.write('a');
     //Serial.print('y');
-  }
+  //}
   /* BluetoothInit();
   while(true){
   String str = BLUETOOTH_read();
@@ -115,6 +116,11 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_PID, &pid);
   SOFT_TIMER_SetDelay(ID_PID, 100);
   SOFT_TIMER_SetRepetition(ID_PID, -1);
+
+  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
+  SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 10);
+  SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
+  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   
 }
 
@@ -138,9 +144,9 @@ void loop()
   Serial.print(VectorArray[3],5);
   Serial.print(" \n\r"); 
 */
-  Serial.print(getFollowLineValue(), HEX );
-  Serial.print("\n");
-  delay(500);
+  //Serial.print(getFollowLineValue(), HEX );
+  //Serial.print("\n");
+  //delay(500);
   /* déposer la balle:
 
 idée
@@ -228,7 +234,7 @@ void aller_jaune()
 *-------------------------------------------------------------------*/
 void tourner(float angle)
 {
-  uint32_t clic = CLIC_DEGREE * abs(angle);
+  int32_t clic = CLIC_DEGREE * abs(angle);
   ENCODER_Reset(RIGHT);
   ENCODER_Reset(LEFT);
   MOTOR_SetSpeed(LEFT, 0);
@@ -334,7 +340,7 @@ void pid()
   ENCODER_Reset(RIGHT);
 
 }
-/*------------------------------------------------- pid ---------------
+/*------------------------------------------------- pidReset ---------------
 |  Function pid
 |
 |  Purpose:  reset pid values
@@ -530,37 +536,7 @@ float getIrRange(int idSensor) {
   }
   return 0;
 }
-/*------------------------------------------------- getFollowLineValue ------
-|  Function getFollowLineValue
-|
-|  Purpose:  Get the value returned from the follow line sensor by taking the value of each sensor ( 3 sensors return 3 values => 1 , 2 , 4. then those are added together to form a number from 0 to 7 )
-|
-|  Parameters: None
-|  Constant :
-|       Nothing
-|  Variables : Can change the value of the sensor pins in the #define 
-| 
-|  Dependency : Arduino ( digitalRead())
-|  Returns:    value of sensors where
-|               1 = blue
-|               2 = yellow
-|               3 = blue & yellow
-|               4 = red
-|               5 = blue & red
-|               6 = yellow & red
-|               7 = blue & yellow & red
-*-------------------------------------------------------------------*/
-char getFollowLineValue() {
-  int i;
-  char valuePin, tempValue;
-  for (i = 0; i < 3; i++)
-  {
-    tempValue = digitalRead(37 + i);
-    valuePin = valuePin << 1;
-    valuePin += tempValue;
-  }
-  return valuePin;
-}
+
 /*------------------------------------------------- followLineInit ------
 |  Function followLineInit
 |
@@ -585,4 +561,146 @@ void followLineInit() {
   pinMode(PIN_FOLLOW_RED, INPUT);
   pinMode(PIN_FOLLOW_YELLOW, INPUT);
   pinMode(PIN_FOLLOW_BLUE, INPUT);
+}
+
+/*------------------------------------------------- getFollowLineValue ------
+|  Function getFollowLineValue
+|
+|  Purpose:  Get the value returned from the follow line sensor by taking the value of each sensor ( 3 sensors return 3 values => 1 , 2 , 4. then those are added together to form a number from 0 to 7 )
+|
+|  Parameters: None
+|  Constant :
+|       Nothing
+|  Variables : Can change the value of the sensor pins in the #define 
+| 
+|  Dependency : Arduino ( digitalRead())
+|  Returns:    value of sensors where
+|               1 = blue
+|               2 = yellow
+|               3 = blue & yellow
+|               4 = red
+|               5 = blue & red
+|               6 = yellow & red
+|               7 = blue & yellow & red
+*-------------------------------------------------------------------*/
+uint8_t getFollowLineValue() {
+  int i;
+  uint8_t valuePin, tempValue;
+  for (i = 0; i < 3; i++)
+  {
+    tempValue = digitalRead(37 + i);
+    valuePin = valuePin << 1;
+    valuePin += tempValue;
+  }
+  return valuePin;
+}
+
+void followLineCallback(void)
+{
+  static int16_t CompteurCallback = 0; 
+  uint8_t ValeurSuiveur;
+  static float speedL = 0.3;
+  static float speedR = 0.3;
+  if (CompteurCallback == 0)
+  {
+    //Serial.print("entre init callback\n");
+    MOTOR_SetSpeed(LEFT, speedL);
+    MOTOR_SetSpeed(RIGHT, speedR);
+    CompteurCallback++;
+    return;
+  }
+  //Serial.print("entre  callback\n");
+  CompteurCallback++;
+  ValeurSuiveur = getFollowLineValue();
+  Serial.print(ValeurSuiveur, DEC );
+  Serial.print("\n");
+  switch (ValeurSuiveur)
+  {
+    case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
+      speedL = 0.3;
+      speedR = 0.3;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+      if (CompteurCallback >= 1000)
+      {
+      speedL = 0;
+      speedR = 0;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+      }
+    break;
+    case 1: // on est trop a gauche on tourne beaucoup a droite
+      CompteurCallback = 1;
+      //speedL = speedL - 0.1;
+      speedR = speedR - 0.0003;
+      if (speedR < 0)
+      {
+        speedR = 0;
+      }
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 2: // on avance 
+      CompteurCallback = 1;
+      speedL = 0.3;
+      speedR = 0.3;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 3: // on est un peu a gauche on tourne un peu a droite
+      CompteurCallback = 1;
+      //speedL = speedL - 0.1;
+      speedR = speedR - 0.0001;
+      if (speedR < 0)
+      {
+        speedR = 0;
+      }
+      if (speedR < 0)
+      {
+        speedR = 0;
+      }
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 4: // on est trop a droite, on tourne beaucoup a gauche
+      CompteurCallback = 1;
+      speedL = speedL - 0.0003;
+      if (speedL < 0)
+      {
+        speedL = 0;
+      }
+      //speedR = speedR - 0.1;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 5: // erreur gauche et droit sont actif mais pas celui du centre 
+      speedL = 0;
+      speedR = 0;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 6: // on est un peu a droite, on tourne un peu a gauche
+      CompteurCallback = 1;
+      speedL = speedL - 0.0001;
+      //speedR = speedR - 0.1;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 7: // erreur
+      CompteurCallback = 1;
+      speedL = 0;
+      speedR = 0;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+
+    break;
+    default:
+      speedL = 0;
+      speedR = 0;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+
+
+  }
 }
