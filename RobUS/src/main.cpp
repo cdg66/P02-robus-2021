@@ -35,7 +35,7 @@ Pour les ajouter dans votre projet sur PIO Home
 // define pour les callbacks
 #define ID_PID 1
 #define ID_SUIVEURDELIGNE 2
-#define ID_3 3
+#define ID_QUILLE 3
 #define ID_4 4
 #define ID_5 5
 #define ID_6 6
@@ -87,6 +87,8 @@ void followLineInit();
 uint8_t getFollowLineValue();
 void followLineCallback(void);
 
+void renverser_quille();
+
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
@@ -121,7 +123,12 @@ void setup() {
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 10);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-  
+  delay(5);
+  SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
+  SOFT_TIMER_SetDelay(ID_QUILLE, 10);
+  SOFT_TIMER_SetRepetition(ID_QUILLE, 1);
+  SOFT_TIMER_Enable(ID_QUILLE);
+    
 }
 
 
@@ -703,4 +710,27 @@ void followLineCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
   }
+}
+
+void renverser_quille()
+{
+  //delay(1000);
+  //Serial.println(getSonarRange(0));
+  //avancer(10);
+  while(((getSonarRange(0))>30))
+  {
+    SOFT_TIMER_Update();
+    avancer(20);
+    //getSonarRange(0);
+    Serial.println(getSonarRange(0));
+  }
+  int dis=getSonarRange(0);
+  MOTOR_SetSpeed(LEFT,0);
+  MOTOR_SetSpeed(RIGHT,0);
+  delay(200);
+  uVirage();
+  Serial.println("avancerfinal");
+  avancer(dis);
+  uTurn();
+  uTurn();
 }
