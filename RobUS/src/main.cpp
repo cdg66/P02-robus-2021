@@ -582,13 +582,14 @@ void followLineInit() {
 |               5 = blue & red
 |               6 = yellow & red
 |               7 = blue & yellow & red
+| Warning the function asume that input pin are sequential  to read them
 *-------------------------------------------------------------------*/
 uint8_t getFollowLineValue() {
   int i;
-  uint8_t valuePin, tempValue;
+  uint8_t valuePin, tempValue = 0;
   for (i = 0; i < 3; i++)
   {
-    tempValue = digitalRead(37 + i);
+    tempValue = digitalRead(PIN_FOLLOW_RED + i);
     valuePin = valuePin << 1;
     valuePin += tempValue;
   }
@@ -621,7 +622,7 @@ void followLineCallback(void)
       speedR = 0.3;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
-      if (CompteurCallback >= 1000)
+      if (CompteurCallback >= 100)
       {
       speedL = 0;
       speedR = 0;
@@ -632,7 +633,7 @@ void followLineCallback(void)
     case 1: // on est trop a gauche on tourne beaucoup a droite
       CompteurCallback = 1;
       //speedL = speedL - 0.1;
-      speedR = speedR - 0.0003;
+      speedR = speedR - 0.3;
       if (speedR < 0)
       {
         speedR = 0;
@@ -650,11 +651,7 @@ void followLineCallback(void)
     case 3: // on est un peu a gauche on tourne un peu a droite
       CompteurCallback = 1;
       //speedL = speedL - 0.1;
-      speedR = speedR - 0.0001;
-      if (speedR < 0)
-      {
-        speedR = 0;
-      }
+      speedR = speedR - 0.1;
       if (speedR < 0)
       {
         speedR = 0;
@@ -664,7 +661,7 @@ void followLineCallback(void)
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
-      speedL = speedL - 0.0003;
+      speedL = speedL - 0.3;
       if (speedL < 0)
       {
         speedL = 0;
@@ -681,7 +678,11 @@ void followLineCallback(void)
     break;
     case 6: // on est un peu a droite, on tourne un peu a gauche
       CompteurCallback = 1;
-      speedL = speedL - 0.0001;
+      speedL = speedL - 0.1;
+      if (speedL < 0)
+      {
+        speedL = 0;
+      }
       //speedR = speedR - 0.1;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
@@ -694,13 +695,12 @@ void followLineCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
 
     break;
-    default:
+    default: // erreur 
+      CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
-
-
   }
 }
