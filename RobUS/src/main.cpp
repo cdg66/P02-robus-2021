@@ -88,6 +88,8 @@ uint8_t getFollowLineValue();
 void followLineCallback(void);
 
 void renverser_quille();
+void AvancerVersQuille();
+void uVirage();
 
 void setup() {
   BoardInit();
@@ -126,7 +128,7 @@ void setup() {
   delay(5);
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 10);
-  SOFT_TIMER_SetRepetition(ID_QUILLE, 1);
+  SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
   SOFT_TIMER_Enable(ID_QUILLE);
     
 }
@@ -383,7 +385,9 @@ void uTurn()
   MOTOR_SetSpeed(LEFT, -0.5);
   MOTOR_SetSpeed(RIGHT, 0.5);
 
-  while(ENCODER_Read(RIGHT)<3650){}
+  while(ENCODER_Read(RIGHT)<3650){
+    SOFT_TIMER_Update();
+  }
   MOTOR_SetSpeed(LEFT,0);
   MOTOR_SetSpeed(RIGHT,0);
 }
@@ -620,8 +624,8 @@ void followLineCallback(void)
   //Serial.print("entre  callback\n");
   CompteurCallback++;
   ValeurSuiveur = getFollowLineValue();
-  Serial.print(ValeurSuiveur, DEC );
-  Serial.print("\n");
+  //Serial.print(ValeurSuiveur, DEC );
+  //Serial.print("\n");
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
@@ -717,20 +721,58 @@ void renverser_quille()
   //delay(1000);
   //Serial.println(getSonarRange(0));
   //avancer(10);
-  while(((getSonarRange(0))>30))
+  if(((getSonarRange(0))>30))
   {
-    SOFT_TIMER_Update();
-    avancer(20);
+    return;
+    //SOFT_TIMER_Update();
+    //avancer(20);
     //getSonarRange(0);
-    Serial.println(getSonarRange(0));
+    //Serial.println(getSonarRange(0));
   }
-  int dis=getSonarRange(0);
+  SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
   MOTOR_SetSpeed(LEFT,0);
   MOTOR_SetSpeed(RIGHT,0);
-  delay(200);
-  uVirage();
-  Serial.println("avancerfinal");
-  avancer(dis);
-  uTurn();
-  uTurn();
+  SOFT_TIMER_SetRepetition(ID_QUILLE, 1);
+  SOFT_TIMER_SetCallback(ID_QUILLE, &AvancerVersQuille);
+  //AvancerVersQuille();
+
+}
+void AvancerVersQuille()
+{
+  static int16_t CompteurCallback = 0;
+  
+  static float dis;
+  //CompteurCallback++;
+  //if (CompteurCallback <= 1)
+  //{
+  //  return;
+  //}
+  //if (CompteurCallback == 2)
+  //{
+    tourner(-80);
+  //}
+  //if (CompteurCallback == 3)
+  //{
+      dis = getSonarRange(0);
+      Serial.print(dis, 6);
+      avancer(dis);
+      uTurn();
+      uTurn();
+      SOFT_TIMER_Disable(ID_QUILLE);
+  //}
+  //delay(200);
+  
+  //uVirage();
+}
+
+void uVirage()
+{
+  ENCODER_Reset(LEFT);
+  ENCODER_Reset(RIGHT);
+  MOTOR_SetSpeed(LEFT, -0.5);
+  MOTOR_SetSpeed(RIGHT, 0.5);
+
+  while(ENCODER_Read(RIGHT)<1825){}
+  MOTOR_SetSpeed(LEFT,0);
+  MOTOR_SetSpeed(RIGHT,0);
 }
