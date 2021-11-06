@@ -48,6 +48,9 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_FOLLOW_YELLOW 38
 #define PIN_FOLLOW_BLUE 39
 
+#define micSon  A0 // entre analogique du 5khz
+#define micAmb  A1 // entree analogique du son ambiant
+
 // objet pour le Mag sensor
 Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
 // objet pour le driver de servo
@@ -91,6 +94,7 @@ void GoToCollorCallback(void);
 
 void renverser_quille();
 
+void readMicrophone();
 
 void setup() {
   BoardInit();
@@ -126,7 +130,12 @@ void setup() {
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 10);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-  delay(5);
+  
+  SOFT_TIMER_SetCallback(ID_MICRO, &readMicrophone);
+  SOFT_TIMER_SetDelay(ID_MICRO, 20);
+  SOFT_TIMER_SetRepetition(ID_MICRO, -1);
+  //SOFT_TIMER_Enable(ID_MICRO);
+
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
@@ -899,3 +908,37 @@ void renverser_quille()
 }
 
 
+void readMicrophone( ) 
+{ /* function readMicrophone : allume les led quand le sifflet est détecté*/
+  static int mic_son_val,mic_amb_val;
+  static int compteurCallback = 0;
+  if(compteurCallback == 0)
+  {
+    mic_son_val = analogRead(micSon);
+    mic_amb_val = analogRead(micAmb);
+    int difference_son = mic_son_val - mic_amb_val ; 
+
+    // Serial.print(F("mic 5k ")); Serial.println(mic_son_val);  affiche les valeurs analog pour le debugguage
+    //Serial.print(F("mic amb ")); Serial.println(mic_amb_val);
+    if (difference_son >= 100) 
+    {
+      //Serial.println("mic detected"); 
+      //Ouverture du voltage des LEDS
+      digitalWrite(13, HIGH);
+      digitalWrite(10, HIGH);
+      digitalWrite(11, HIGH);
+      SOFT_TIMER_Enable(ID_QUILLE);
+      compteurCallback++;
+    }
+  }
+  compteurCallback++;
+  if(compteurCallback > 100 )
+  {
+    // fermeture des ports
+    digitalWrite(13, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    // on arrete d'ecouter
+    SOFT_TIMER_Disable(ID_MICRO);
+  } 
+}
