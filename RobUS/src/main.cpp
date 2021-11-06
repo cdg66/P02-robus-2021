@@ -148,57 +148,6 @@ void loop()
 {
    //avancer(200);
    SOFT_TIMER_Update();
-/*
-  float VectorArray[3];
-  MagSensor_GetData(VectorArray);
-  Serial.print("X:");
-  Serial.print(VectorArray[1],5);
-  Serial.print(" ");
-
-  Serial.print("Y:");
-  Serial.print(VectorArray[2],5);
-  Serial.print(" ");
-
-  Serial.print("Z:");
-  Serial.print(VectorArray[3],5);
-  Serial.print(" \n\r"); 
-*/
-  //Serial.print(getFollowLineValue(), HEX );
-  //Serial.print("\n");
-  //delay(500);
-  /* déposer la balle:
-
-idée
-
-étape #1: faire une fonction qui renvoie un chiffre, 0, 1 ou 2 
-      après avoir détecté la couleur.
-
-étape #2: selon ce chiffre, faire trois fonctions: aller_(bleu, jaune, ou rouge)
-
-
-détecter la couleur
-allumer DEL de la couleur détecter
-jusqu'au ballon
-prendre ballon
-aller à la bonne couleur
-lâcher ballon */
-
-//fonction touver_couleur
-/* 
-  if(trouver_couleur==0)
-  {
-    aller_bleu();
-  }
-  else if(trouver_couleur==1)
-  {
-    aller_rouge();
-  }
-  else
-  {
-    aller_jaune();
-  }
-   */
-
 }
 void aller_bleu()
 {
@@ -632,27 +581,16 @@ void followLineCallback(void)
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
-      if ((speedL == 0)||(speedL == 0)) // si on est en train de tourner on continue
-      {
-        if (CompteurCallback >= 100)
-        {
-          speedL = 0;
-          speedR = 0;
-          MOTOR_SetSpeed(LEFT, speedL);
-          MOTOR_SetSpeed(RIGHT, speedR);
-        }
-        break;
-      }
       speedL = 0.3;
       speedR = 0.3;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
       if (CompteurCallback >= 100)
       {
-      speedL = 0;
-      speedR = 0;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+        speedL = 0;
+        speedR = 0;
+        MOTOR_SetSpeed(LEFT, speedL);
+        MOTOR_SetSpeed(RIGHT, speedR);
       }
     break;
     case 1: // on est trop a gauche on tourne beaucoup a droite
@@ -696,6 +634,7 @@ void followLineCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 5: // erreur gauche et droit sont actif mais pas celui du centre 
+      CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
@@ -717,7 +656,7 @@ void followLineCallback(void)
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR); 
 
     break;
     default: // erreur 
@@ -729,6 +668,7 @@ void followLineCallback(void)
     break;
   }
 }
+
 
 void GetBackOnLineCallback(void)
 {
@@ -771,7 +711,7 @@ void GetBackOnLineCallback(void)
 
 void GoToCollorCallback(void)
 {
-  static int16_t CompteurCallback = 0; 
+    static int16_t CompteurCallback = 0; 
   uint8_t ValeurSuiveur;
   static float speedL = 0.3;
   static float speedR = 0.3;
@@ -791,27 +731,16 @@ void GoToCollorCallback(void)
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
-      if ((speedL == 0)||(speedL == 0)) // si on est en train de tourner on continue
-      {
-        if (CompteurCallback >= 100)
-        {
-          speedL = 0;
-          speedR = 0;
-          MOTOR_SetSpeed(LEFT, speedL);
-          MOTOR_SetSpeed(RIGHT, speedR);
-        }
-        break;
-      }
       speedL = 0.3;
       speedR = 0.3;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
       if (CompteurCallback >= 100)
       {
-      speedL = 0;
-      speedR = 0;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+        speedL = 0;
+        speedR = 0;
+        MOTOR_SetSpeed(LEFT, speedL);
+        MOTOR_SetSpeed(RIGHT, speedR);
       }
     break;
     case 1: // on est trop a gauche on tourne beaucoup a droite
@@ -832,11 +761,16 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
-    case 3: // on est a l'intersection on tourne 90
+    case 3: // on est un peu a gauche on tourne un peu a droite
       CompteurCallback = 1;
-      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-      tourner(75);
-      SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+      //speedL = speedL - 0.1;
+      speedR = speedR - 0.1;
+      if (speedR < 0)
+      {
+        speedR = 0;
+      }
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
@@ -850,6 +784,7 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 5: // erreur gauche et droit sont actif mais pas celui du centre 
+      CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
@@ -871,7 +806,7 @@ void GoToCollorCallback(void)
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR); 
 
     break;
     default: // erreur 
