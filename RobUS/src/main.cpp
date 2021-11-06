@@ -5,7 +5,7 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <string.h>
 #include <SoftwareSerial.h>
-#define VERSIONID "Version capteurs"
+#define VERSIONID "Version main"
 /* 
 Avant de compiler ajouter les librairies:
 - Adafruit PWM Servo Driver Library 
@@ -86,10 +86,10 @@ void aller_rouge();
 void followLineInit();
 uint8_t getFollowLineValue();
 void followLineCallback(void);
+void GetBackOnLineCallback(void);
 
 void renverser_quille();
-void AvancerVersQuille();
-void uVirage();
+
 
 void setup() {
   BoardInit();
@@ -716,63 +716,136 @@ void followLineCallback(void)
   }
 }
 
+void GetBackOnLineCallback(void)
+{
+  static int16_t CompteurCallback = 0; 
+  uint8_t ValeurSuiveur;
+  static float speedL = 0.3;
+  static float speedR = 0.3;
+  if (CompteurCallback == 0)
+  {
+    //Serial.print("entre init callback\n");
+    MOTOR_SetSpeed(LEFT, speedL);
+    MOTOR_SetSpeed(RIGHT, speedR);
+    CompteurCallback++;
+    return;
+  }
+  //Serial.print("entre  callback\n");
+  CompteurCallback++;
+  ValeurSuiveur = getFollowLineValue();
+  //Serial.print(ValeurSuiveur, DEC );
+  //Serial.print("\n");
+  switch (ValeurSuiveur)
+  {
+    case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
+      speedL = 0.3;
+      speedR = 0.3;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+      if (CompteurCallback >= 1000)
+      {
+      speedL = 0;
+      speedR = 0;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+      }
+    break;
+    case 1: // on est trop a gauche on tourne beaucoup a droite
+      CompteurCallback = 1;
+      //speedL = speedL - 0.1;
+      speedR = speedR - 0.3;
+      if (speedR < 0)
+      {
+        speedR = 0;
+      }
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 2: // on avance 
+      CompteurCallback = 1;
+      speedL = 0.3;
+      speedR = 0.3;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR); 
+    break;
+    case 3: // on est a l'intersection on tourne a 90 degrees
+      CompteurCallback = 1;
+      //speedL = speedL - 0.1;
+      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      tourner(75);
+      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+    break;
+    case 4: // on est trop a droite, on tourne beaucoup a gauche
+      CompteurCallback = 1;
+      speedL = speedL - 0.3;
+      if (speedL < 0)
+      {
+        speedL = 0;
+      }
+      //speedR = speedR - 0.1;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 5: // erreur gauche et droit sont actif mais pas celui du centre 
+      speedL = 0;
+      speedR = 0;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 6: // on est un peu a droite, on tourne un peu a gauche
+      CompteurCallback = 1;
+      speedL = speedL - 0.1;
+      if (speedL < 0)
+      {
+        speedL = 0;
+      }
+      //speedR = speedR - 0.1;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    case 7: // la ligne est perpendiculaire a nous on tourne a gauche 
+      CompteurCallback = 1;
+      speedL = speedL - 0.3;
+      if (speedL < 0)
+      {
+        speedL = 0;
+      }
+      //speedR = speedR - 0.1;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+    default: // erreur 
+      CompteurCallback = 1;
+      speedL = 0;
+      speedR = 0;
+      MOTOR_SetSpeed(LEFT, speedL);
+      MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+  }
+}
+
 void renverser_quille()
 {
+  static float dis;
   //delay(1000);
   //Serial.println(getSonarRange(0));
   //avancer(10);
-  if(((getSonarRange(0))>30))
+  dis = getSonarRange(0);
+  if(dis>30)
   {
     return;
-    //SOFT_TIMER_Update();
-    //avancer(20);
-    //getSonarRange(0);
-    //Serial.println(getSonarRange(0));
   }
   SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+  SOFT_TIMER_Disable(ID_QUILLE);
   MOTOR_SetSpeed(LEFT,0);
   MOTOR_SetSpeed(RIGHT,0);
-  SOFT_TIMER_SetRepetition(ID_QUILLE, 1);
-  SOFT_TIMER_SetCallback(ID_QUILLE, &AvancerVersQuille);
-  //AvancerVersQuille();
+  tourner(-75);
+  //Serial.print(dis, 6);
+  avancer(dis + 5);
+  uTurn();
+  uTurn();
+  //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
+  //SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
+  //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
 
-}
-void AvancerVersQuille()
-{
-  static int16_t CompteurCallback = 0;
-  
-  static float dis;
-  //CompteurCallback++;
-  //if (CompteurCallback <= 1)
-  //{
-  //  return;
-  //}
-  //if (CompteurCallback == 2)
-  //{
-    tourner(-80);
-  //}
-  //if (CompteurCallback == 3)
-  //{
-      dis = getSonarRange(0);
-      Serial.print(dis, 6);
-      avancer(dis);
-      uTurn();
-      uTurn();
-      SOFT_TIMER_Disable(ID_QUILLE);
-  //}
-  //delay(200);
-  
-  //uVirage();
-}
 
-void uVirage()
-{
-  ENCODER_Reset(LEFT);
-  ENCODER_Reset(RIGHT);
-  MOTOR_SetSpeed(LEFT, -0.5);
-  MOTOR_SetSpeed(RIGHT, 0.5);
-
-  while(ENCODER_Read(RIGHT)<1825){}
-  MOTOR_SetSpeed(LEFT,0);
-  MOTOR_SetSpeed(RIGHT,0);
-}
