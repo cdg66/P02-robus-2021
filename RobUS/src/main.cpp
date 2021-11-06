@@ -847,5 +847,6 @@ void renverser_quille()
   //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
   //SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+}
 
 
