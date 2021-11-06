@@ -36,7 +36,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define ID_PID 1
 #define ID_SUIVEURDELIGNE 2
 #define ID_QUILLE 3
-#define ID_4 4
+#define ID_MICRO 4
 #define ID_5 5
 #define ID_6 6
 #define ID_7 7
@@ -87,6 +87,7 @@ void followLineInit();
 uint8_t getFollowLineValue();
 void followLineCallback(void);
 void GetBackOnLineCallback(void);
+void GoToCollorCallback(void);
 
 void renverser_quille();
 
@@ -127,7 +128,7 @@ void setup() {
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   delay(5);
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
-  SOFT_TIMER_SetDelay(ID_QUILLE, 10);
+  SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
   SOFT_TIMER_Enable(ID_QUILLE);
     
@@ -559,14 +560,7 @@ float getIrRange(int idSensor) {
 |  Variables : Can change the value of the sensor pins in the #define 
 | 
 |  Dependency : Arduino ( digitalRead())
-|  Returns:    value of sensors where
-|               1 = blue
-|               2 = yellow
-|               3 = blue & yellow
-|               4 = red
-|               5 = blue & red
-|               6 = yellow & red
-|               7 = blue & yellow & red
+|  Returns:    nothing
 *-------------------------------------------------------------------*/
 void followLineInit() {
   pinMode(PIN_FOLLOW_RED, INPUT);
@@ -629,6 +623,17 @@ void followLineCallback(void)
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
+      if ((speedL == 0)||(speedL == 0)) // si on est en train de tourner on continue
+      {
+        if (CompteurCallback >= 100)
+        {
+          speedL = 0;
+          speedR = 0;
+          MOTOR_SetSpeed(LEFT, speedL);
+          MOTOR_SetSpeed(RIGHT, speedR);
+        }
+        break;
+      }
       speedL = 0.3;
       speedR = 0.3;
       MOTOR_SetSpeed(LEFT, speedL);
@@ -718,6 +723,45 @@ void followLineCallback(void)
 
 void GetBackOnLineCallback(void)
 {
+  static int16_t CompteurCallback = 0;
+  static int8_t LigneTrouvee = 0; 
+  uint8_t ValeurSuiveur;
+  static float speedL = 0.3;
+  static float speedR = 0.3;
+
+  if (CompteurCallback == 0)
+  {
+    //Serial.print("entre init callback\n");
+    MOTOR_SetSpeed(LEFT, speedL);
+    MOTOR_SetSpeed(RIGHT, speedR);
+    CompteurCallback++;
+    return;
+  }
+  //Serial.print("entre  callback\n");
+  CompteurCallback++;
+  ValeurSuiveur = getFollowLineValue();
+  if (LigneTrouvee > 0)// est-ce qu'on a deja trouvee la ligne?
+  {
+    if (ValeurSuiveur == 0) // est-ce qu'on est sur la ligne
+    {
+      MOTOR_SetSpeed(LEFT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR);
+      return;
+    }
+  }
+  LigneTrouvee = 1;  // tourner jusqua tant qu'on est sur la ligne
+  tourner(5);
+  if (getFollowLineValue() == 2)
+  {
+    MOTOR_SetSpeed(LEFT, 0);
+    MOTOR_SetSpeed(RIGHT, 0);
+    SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
+    SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+  }  
+}
+
+void GoToCollorCallback(void)
+{
   static int16_t CompteurCallback = 0; 
   uint8_t ValeurSuiveur;
   static float speedL = 0.3;
@@ -738,11 +782,22 @@ void GetBackOnLineCallback(void)
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
+      if ((speedL == 0)||(speedL == 0)) // si on est en train de tourner on continue
+      {
+        if (CompteurCallback >= 100)
+        {
+          speedL = 0;
+          speedR = 0;
+          MOTOR_SetSpeed(LEFT, speedL);
+          MOTOR_SetSpeed(RIGHT, speedR);
+        }
+        break;
+      }
       speedL = 0.3;
       speedR = 0.3;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
-      if (CompteurCallback >= 1000)
+      if (CompteurCallback >= 100)
       {
       speedL = 0;
       speedR = 0;
@@ -766,14 +821,13 @@ void GetBackOnLineCallback(void)
       speedL = 0.3;
       speedR = 0.3;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR); 
+      MOTOR_SetSpeed(RIGHT, speedR);
     break;
-    case 3: // on est a l'intersection on tourne a 90 degrees
+    case 3: // on est a l'intersection on tourne 90
       CompteurCallback = 1;
-      //speedL = speedL - 0.1;
       SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
       tourner(75);
-      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
@@ -803,16 +857,13 @@ void GetBackOnLineCallback(void)
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
-    case 7: // la ligne est perpendiculaire a nous on tourne a gauche 
+    case 7: // erreur
       CompteurCallback = 1;
-      speedL = speedL - 0.3;
-      if (speedL < 0)
-      {
-        speedL = 0;
-      }
-      //speedR = speedR - 0.1;
+      speedL = 0;
+      speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
+
     break;
     default: // erreur 
       CompteurCallback = 1;
@@ -823,7 +874,6 @@ void GetBackOnLineCallback(void)
     break;
   }
 }
-
 void renverser_quille()
 {
   static float dis;
@@ -839,14 +889,13 @@ void renverser_quille()
   SOFT_TIMER_Disable(ID_QUILLE);
   MOTOR_SetSpeed(LEFT,0);
   MOTOR_SetSpeed(RIGHT,0);
-  tourner(-75);
+  tourner(75);
   //Serial.print(dis, 6);
   avancer(dis + 5);
   uTurn();
   uTurn();
-  //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
-  //SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
-  //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
+  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
 }
 
 
