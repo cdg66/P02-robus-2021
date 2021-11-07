@@ -48,10 +48,17 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_FOLLOW_YELLOW 38
 #define PIN_FOLLOW_BLUE 39
 
+
+#define PIN_LED_RED  10
+#define PIN_LED_YELLOW 11
+#define PIN_LED_BLUE 43
+#define PIN_LED_GREEN 41
+
+
 #define SPEED_SUIVEUR 0.3
 
-#define micSon  A0 // entre analogique du 5khz
-#define micAmb  A1 // entree analogique du son ambiant
+#define micSon  A4 // entre analogique du 5khz
+#define micAmb  A5 // entree analogique du son ambiant
 
 // objet pour le Mag sensor
 Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
@@ -137,13 +144,16 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_MICRO, &readMicrophone);
   SOFT_TIMER_SetDelay(ID_MICRO, 20);
   SOFT_TIMER_SetRepetition(ID_MICRO, -1);
-  //SOFT_TIMER_Enable(ID_MICRO);
+  SOFT_TIMER_Enable(ID_MICRO);
 
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
-  SOFT_TIMER_Enable(ID_QUILLE);
-    
+  //SOFT_TIMER_Enable(ID_QUILLE);
+  pinMode(PIN_LED_RED,OUTPUT);
+  pinMode(PIN_LED_YELLOW,OUTPUT);
+  pinMode(PIN_LED_BLUE,OUTPUT);
+  pinMode(PIN_LED_GREEN,OUTPUT);
 }
 
 
@@ -639,7 +649,7 @@ void followLineCallback(void)
     break;
     case 1: // on est trop a gauche on tourne beaucoup a droite
       CompteurCallback = 1;
-      speedL = SPEED_SUIVEUR + 0.16;
+      speedL = SPEED_SUIVEUR + 0.2;
       speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
@@ -657,7 +667,7 @@ void followLineCallback(void)
     break;
     case 3: // on est un peu a gauche on tourne un peu a droite
       CompteurCallback = 1;
-      speedL = SPEED_SUIVEUR + 0.16;
+      speedL = SPEED_SUIVEUR + 0.2;
       speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
@@ -745,6 +755,7 @@ void GetBackOnLineCallback(void)
   {
     tournerSuiveur(5);
   }while (getFollowLineValue() != 2);
+  delay(100);
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
   //SOFT_TIMER_Disable(ID_QUILLE);
 }
@@ -785,7 +796,7 @@ void GoToCollorCallback(void)
     break;
     case 1: // on est trop a gauche on tourne beaucoup a droite
       CompteurCallback = 1;
-      speedL =  SPEED_SUIVEUR + 0.16;
+      speedL =  SPEED_SUIVEUR + 0.2;
       speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
@@ -803,7 +814,7 @@ void GoToCollorCallback(void)
     break;
     case 3: // on est un peu a gauche on tourne un peu a droite
       CompteurCallback = 1;
-      speedL = SPEED_SUIVEUR + 0.16;
+      speedL = SPEED_SUIVEUR + 0.2;
       speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
@@ -870,6 +881,7 @@ void renverser_quille()
   {
     return;
   }
+  digitalWrite(PIN_LED_GREEN,HIGH);
   SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
   SOFT_TIMER_Disable(ID_QUILLE);
   MOTOR_SetSpeed(LEFT,0);
@@ -888,33 +900,23 @@ void readMicrophone( )
 { /* function readMicrophone : allume les led quand le sifflet est détecté*/
   static int mic_son_val,mic_amb_val;
   static int compteurCallback = 0;
-  if(compteurCallback == 0)
-  {
-    mic_son_val = analogRead(micSon);
-    mic_amb_val = analogRead(micAmb);
-    int difference_son = mic_son_val - mic_amb_val ; 
+  mic_son_val = analogRead(micSon);
+  mic_amb_val = analogRead(micAmb);
+  int difference_son = mic_son_val - mic_amb_val ; 
 
-    // Serial.print(F("mic 5k ")); Serial.println(mic_son_val);  affiche les valeurs analog pour le debugguage
-    //Serial.print(F("mic amb ")); Serial.println(mic_amb_val);
-    if (difference_son >= 100) 
-    {
-      //Serial.println("mic detected"); 
-      //Ouverture du voltage des LEDS
-      digitalWrite(13, HIGH);
-      digitalWrite(10, HIGH);
-      digitalWrite(11, HIGH);
-      SOFT_TIMER_Enable(ID_QUILLE);
-      compteurCallback++;
-    }
-  }
-  compteurCallback++;
-  if(compteurCallback > 100 )
+  //Serial.print(F("mic 5k ")); Serial.println(mic_son_val); // affiche les valeurs analog pour le debugguage
+  //Serial.print(F("mic amb ")); Serial.println(mic_amb_val);
+  Serial.print(F("mic diff ")); Serial.println(difference_son);
+  if (difference_son >= 60) 
   {
-    // fermeture des ports
-    digitalWrite(13, LOW);
-    digitalWrite(10, LOW);
-    digitalWrite(11, LOW);
-    // on arrete d'ecouter
+    //Serial.println("mic detected"); 
+    //Ouverture du voltage des LEDS
+    digitalWrite(PIN_LED_RED, HIGH);
+    digitalWrite(PIN_LED_YELLOW, HIGH);
+    digitalWrite(PIN_LED_BLUE, HIGH);
+    SOFT_TIMER_Enable(ID_QUILLE);
+    //compteurCallback++;
     SOFT_TIMER_Disable(ID_MICRO);
-  } 
+  }
+  
 }
