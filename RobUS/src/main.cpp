@@ -48,6 +48,8 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_FOLLOW_YELLOW 38
 #define PIN_FOLLOW_BLUE 39
 
+#define SPEED_SUIVEUR 0.3
+
 #define micSon  A0 // entre analogique du 5khz
 #define micAmb  A1 // entree analogique du son ambiant
 
@@ -65,6 +67,7 @@ float vitesseD = 0.50;
 
 // mouvements
 void tourner(float angle);
+void tournerSuiveur(float angle);
 void avancer (float distance);
 void uTurn();
 void pid();
@@ -127,7 +130,7 @@ void setup() {
   SOFT_TIMER_SetRepetition(ID_PID, -1);
 
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
-  SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 10);
+  SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   
@@ -223,6 +226,47 @@ void tourner(float angle)
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
 }
+
+/*------------------------------------------------- tourner ----------
+|  Function tourner
+|
+|  Purpose:  Make RobUS do a turn on himself with only one weel active
+|
+|  Parameters:
+|     type float 
+|          angle(IN) angle of witch the robot need to face after his turn
+|          give a negative value to turn left and a positive one to
+|          turn right.
+|
+|  Constant : 
+|     CLIC_DEGREE: Number of encoder pulse for 1 degrees of turn.
+|  Dependency : LibRobUS
+|  Returns:  nothing
+*-------------------------------------------------------------------*/
+void tournerSuiveur(float angle)
+{
+  int32_t clic = CLIC_DEGREE * abs(angle);
+  ENCODER_Reset(RIGHT);
+  ENCODER_Reset(LEFT);
+  MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
+  if(angle<0)
+  {
+  MOTOR_SetSpeed(RIGHT, 0.2);
+
+  while(ENCODER_Read(RIGHT)<clic)
+  {}
+  }
+  else{
+  MOTOR_SetSpeed(LEFT, 0.2);
+
+  while(ENCODER_Read(LEFT)<clic)
+  {}
+  }
+  MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
+}
+
 /*------------------------------------------------- avancer ----------
 |  Function avancer
 |
@@ -563,8 +607,8 @@ void followLineCallback(void)
 {
   static int16_t CompteurCallback = 0; 
   uint8_t ValeurSuiveur;
-  static float speedL = 0.3;
-  static float speedR = 0.3;
+  static float speedL = SPEED_SUIVEUR;
+  static float speedR = SPEED_SUIVEUR;
   if (CompteurCallback == 0)
   {
     //Serial.print("entre init callback\n");
@@ -581,11 +625,11 @@ void followLineCallback(void)
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
-      speedL = 0.3;
-      speedR = 0.3;
+      speedL = SPEED_SUIVEUR;
+      speedR = SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
-      if (CompteurCallback >= 100)
+      if (CompteurCallback >= 500)
       {
         speedL = 0;
         speedR = 0;
@@ -595,8 +639,8 @@ void followLineCallback(void)
     break;
     case 1: // on est trop a gauche on tourne beaucoup a droite
       CompteurCallback = 1;
-      //speedL = speedL - 0.1;
-      speedR = speedR - 0.3;
+      speedL = SPEED_SUIVEUR + 0.16;
+      speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
         speedR = 0;
@@ -606,15 +650,15 @@ void followLineCallback(void)
     break;
     case 2: // on avance 
       CompteurCallback = 1;
-      speedL = 0.3;
-      speedR = 0.3;
+      speedL = SPEED_SUIVEUR;
+      speedR = SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 3: // on est un peu a gauche on tourne un peu a droite
       CompteurCallback = 1;
-      //speedL = speedL - 0.1;
-      speedR = speedR - 0.1;
+      speedL = SPEED_SUIVEUR + 0.16;
+      speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
         speedR = 0;
@@ -624,12 +668,12 @@ void followLineCallback(void)
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
-      speedL = speedL - 0.3;
+      speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
         speedL = 0;
       }
-      //speedR = speedR - 0.1;
+      //speedR = speedR - SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
@@ -642,12 +686,12 @@ void followLineCallback(void)
     break;
     case 6: // on est un peu a droite, on tourne un peu a gauche
       CompteurCallback = 1;
-      speedL = speedL - 0.1;
+      speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
         speedL = 0;
       }
-      //speedR = speedR - 0.1;
+      //speedR = speedR - SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
@@ -673,10 +717,9 @@ void followLineCallback(void)
 void GetBackOnLineCallback(void)
 {
   static int16_t CompteurCallback = 0;
-  static int8_t LigneTrouvee = 0; 
   uint8_t ValeurSuiveur;
-  static float speedL = 0.3;
-  static float speedR = 0.3;
+  static float speedL = SPEED_SUIVEUR;
+  static float speedR = SPEED_SUIVEUR;
 
   if (CompteurCallback == 0)
   {
@@ -698,10 +741,10 @@ void GetBackOnLineCallback(void)
       return;
 //    }
   }
-  while (getFollowLineValue() != 2)
+  do
   {
-    tourner(5);
-  }
+    tournerSuiveur(5);
+  }while (getFollowLineValue() != 2);
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
   //SOFT_TIMER_Disable(ID_QUILLE);
 }
@@ -710,8 +753,8 @@ void GoToCollorCallback(void)
 {
     static int16_t CompteurCallback = 0; 
   uint8_t ValeurSuiveur;
-  static float speedL = 0.3;
-  static float speedR = 0.3;
+  static float speedL = SPEED_SUIVEUR;
+  static float speedR = SPEED_SUIVEUR;
   if (CompteurCallback == 0)
   {
     //Serial.print("entre init callback\n");
@@ -728,11 +771,11 @@ void GoToCollorCallback(void)
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
-      speedL = 0.3;
-      speedR = 0.3;
+      speedL = SPEED_SUIVEUR;
+      speedR = SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
-      if (CompteurCallback >= 100)
+      if (CompteurCallback >= 1000)
       {
         speedL = 0;
         speedR = 0;
@@ -742,8 +785,8 @@ void GoToCollorCallback(void)
     break;
     case 1: // on est trop a gauche on tourne beaucoup a droite
       CompteurCallback = 1;
-      //speedL = speedL - 0.1;
-      speedR = speedR - 0.3;
+      speedL =  SPEED_SUIVEUR + 0.16;
+      speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
         speedR = 0;
@@ -753,15 +796,15 @@ void GoToCollorCallback(void)
     break;
     case 2: // on avance 
       CompteurCallback = 1;
-      speedL = 0.3;
-      speedR = 0.3;
+      speedL = SPEED_SUIVEUR;
+      speedR = SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 3: // on est un peu a gauche on tourne un peu a droite
       CompteurCallback = 1;
-      //speedL = speedL - 0.1;
-      speedR = speedR - 0.1;
+      speedL = SPEED_SUIVEUR + 0.16;
+      speedR = speedR - SPEED_SUIVEUR;
       if (speedR < 0)
       {
         speedR = 0;
@@ -771,12 +814,12 @@ void GoToCollorCallback(void)
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
-      speedL = speedL - 0.3;
+      speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
         speedL = 0;
       }
-      //speedR = speedR - 0.1;
+      //speedR = speedR - SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
@@ -788,15 +831,16 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 6: // on est un peu a droite, on tourne un peu a gauche
-      CompteurCallback = 1;
-      speedL = speedL - 0.1;
+      tourner(-95);
+      /* CompteurCallback = 1;
+      speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
         speedL = 0;
       }
-      //speedR = speedR - 0.1;
+      //speedR = speedR - SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR); */
     break;
     case 7: // erreur
       CompteurCallback = 1;
