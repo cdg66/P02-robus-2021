@@ -689,24 +689,21 @@ void GetBackOnLineCallback(void)
   //Serial.print("entre  callback\n");
   CompteurCallback++;
   ValeurSuiveur = getFollowLineValue();
-  if (LigneTrouvee > 0)// est-ce qu'on a deja trouvee la ligne?
+  if (ValeurSuiveur == 0)// est-ce qu'on a deja trouvee la ligne?
   {
-    if (ValeurSuiveur == 0) // est-ce qu'on est sur la ligne
-    {
-      MOTOR_SetSpeed(LEFT, speedR);
-      MOTOR_SetSpeed(RIGHT, speedR);
+//    if (ValeurSuiveur == 0) // est-ce qu'on est sur la ligne
+//    {
+//     MOTOR_SetSpeed(LEFT, speedR);
+//      MOTOR_SetSpeed(RIGHT, speedR);
       return;
-    }
+//    }
   }
-  LigneTrouvee = 1;  // tourner jusqua tant qu'on est sur la ligne
-  tourner(5);
-  if (getFollowLineValue() == 2)
+  while (getFollowLineValue() != 2)
   {
-    MOTOR_SetSpeed(LEFT, 0);
-    MOTOR_SetSpeed(RIGHT, 0);
-    SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
-    SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-  }  
+    tourner(5);
+  }
+  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
+  //SOFT_TIMER_Disable(ID_QUILLE);
 }
 
 void GoToCollorCallback(void)
@@ -837,7 +834,7 @@ void renverser_quille()
   //Serial.print(dis, 6);
   avancer(dis + 5);
   uTurn();
-  uTurn();
+  //uTurn();
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
 }
