@@ -853,13 +853,14 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR); */
     break;
-    case 7: // erreur
+    case 7: // on est a la feulle de couleur
       CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR); 
-
+      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      
     break;
     default: // erreur 
       CompteurCallback = 1;
