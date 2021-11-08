@@ -5,6 +5,8 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <string.h>
 #include <SoftwareSerial.h>
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
 #define VERSIONID "Version main"
 /* 
 Avant de compiler ajouter les librairies:
@@ -59,6 +61,10 @@ Pour les ajouter dans votre projet sur PIO Home
 
 #define micSon  A4 // entre analogique du 5khz
 #define micAmb  A5 // entree analogique du son ambiant
+
+uint16_t r, g, b, c;
+uint8_t i;
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_60X);
 
 // objet pour le Mag sensor
 Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
