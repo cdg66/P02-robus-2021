@@ -951,3 +951,24 @@ void readMicrophone( )
   }
   
 }
+
+void trouver_aller_couleur()
+{
+ Serial.begin(9600);
+tcs.setIntegrationTime(TCS34725_INTEGRATIONTIME_614MS);
+delay(154); // Delay for one old integ. time period (to finish old reading)
+delay(615); // Delay for one new integ. time period (to allow new reading)
+tcs.getRawData(&r, &g, &b, &c);
+if(g>b && b>r)
+{
+  aller_bleu();
+}
+else if(r>g && g>b)
+{
+  aller_rouge();
+}
+else if(g>=r && r>b)
+{
+  aller_jaune();
+}
+}
