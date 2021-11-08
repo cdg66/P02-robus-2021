@@ -57,7 +57,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_LED_GREEN 41
 
 
-#define SPEED_SUIVEUR 0.3
+#define SPEED_SUIVEUR 0.25
 
 #define micSon  A4 // entre analogique du 5khz
 #define micAmb  A5 // entree analogique du son ambiant
@@ -154,17 +154,17 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_MICRO, &readMicrophone);
   SOFT_TIMER_SetDelay(ID_MICRO, 20);
   SOFT_TIMER_SetRepetition(ID_MICRO, -1);
-  SOFT_TIMER_Enable(ID_MICRO);
+  //SOFT_TIMER_Enable(ID_MICRO);
 
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
-
+  SOFT_TIMER_Enable(ID_QUILLE);
+  
   SOFT_TIMER_SetCallback(ID_COULEUR, &trouver_aller_couleur);
   SOFT_TIMER_SetDelay(ID_COULEUR, 50);
   SOFT_TIMER_SetRepetition(ID_COULEUR, -1);
-
-  //SOFT_TIMER_Enable(ID_QUILLE);
+ 
   pinMode(PIN_LED_RED,OUTPUT);
   pinMode(PIN_LED_YELLOW,OUTPUT);
   pinMode(PIN_LED_BLUE,OUTPUT);
@@ -832,7 +832,8 @@ void GetBackOnLineCallback(void)
 
 void GoToCollorCallback(void)
 {
-    static int16_t CompteurCallback = 0; 
+  static int16_t CompteurCallback = 0; 
+  static int16_t Compteur07 = 0; 
   uint8_t ValeurSuiveur;
   static float speedL = SPEED_SUIVEUR;
   static float speedR = SPEED_SUIVEUR;
@@ -912,8 +913,8 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 6: // on est un peu a droite, on tourne un peu a gauche
-      tourner(-95);
-      /* CompteurCallback = 1;
+      //tourner(-95);
+      CompteurCallback = 1;
       speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
@@ -921,9 +922,15 @@ void GoToCollorCallback(void)
       }
       //speedR = speedR - SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR); */
+      MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 7: // on est a la feulle de couleur
+      if (Compteur07 == 0)
+      {
+        tourner(-95);
+        Compteur07++;
+        return;
+      }
       CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
@@ -932,8 +939,6 @@ void GoToCollorCallback(void)
       SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
       avancer_distance(20);
       SOFT_TIMER_Enable(ID_COULEUR);
-      
-      
     break;
     default: // erreur 
       CompteurCallback = 1;
