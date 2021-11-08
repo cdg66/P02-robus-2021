@@ -75,7 +75,8 @@ float vitesseD = 0.50;
 // mouvements
 void tourner(float angle);
 void tournerSuiveur(float angle);
-void avancer (float distance);
+void avancer_distance (float distance);
+void avancer_timer (float distance);
 void uTurn();
 void pid();
 void pidReset();
@@ -108,9 +109,6 @@ void readMicrophone();
 
 void setup() {
   BoardInit();
-
-  //avancer(25);
-  //tourner(90);
   Serial.write(VERSIONID);
 
   //SoftwareSerial BTSerial(16,17);
@@ -162,18 +160,18 @@ void setup() {
 
 void loop()
 {
-   //avancer(200);
+   //avancer_distance(200);
   SOFT_TIMER_Update();
 }
 void aller_bleu()
 {
   //allumer DEL bleu
-  avancer(40);
+  avancer_distance(40);
   //prendre baller avec servos moteurs
   tourner(-90);
-  avancer(70);
+  avancer_distance(70);
   tourner(90);
-  avancer(225); //jusqu'à la case bleue
+  avancer_distance(225); //jusqu'à la case bleue
   //lâcher la balle
 
 }
@@ -181,9 +179,9 @@ void aller_bleu()
 void aller_rouge()
 {
   //allumer DEL rouge
-  avancer(40);
+  avancer_distance(40);
   //prendre balle avec servos moteurs
-  avancer(225); //jusqu'à la case rouge
+  avancer_distance(225); //jusqu'à la case rouge
   //lâcher balle
 
 }
@@ -191,12 +189,12 @@ void aller_rouge()
 void aller_jaune()
 {
   //allumer DEL jaune
-   avancer(40);
+   avancer_distance(40);
   //prendre balle avec servos moteurs
   tourner(90);
-  avancer(70);
+  avancer_distance(70);
   tourner(-90);
-  avancer(225); //jusqu'à la case jaune
+  avancer_distance(225); //jusqu'à la case jaune
   //lâcher balle
 
 }
@@ -280,8 +278,8 @@ void tournerSuiveur(float angle)
   MOTOR_SetSpeed(RIGHT, 0);
 }
 
-/*------------------------------------------------- avancer ----------
-|  Function avancer
+/*------------------------------------------------- avancer_distance ----------
+|  Function avancer_distance
 |
 |  Purpose:  Make RobUS move forward to a fixed distance
 |
@@ -295,7 +293,7 @@ void tournerSuiveur(float angle)
 |  Dependency : LibRobUS
 |  Returns:  nothing
 *-------------------------------------------------------------------*/
-void avancer(float distance)
+void avancer_distance(float distance)
 {
 
   int32_t clics = distance * CLIC_CM;
@@ -306,10 +304,8 @@ void avancer(float distance)
   
   totalD=0;
   totalG=0;
- // SOFT_TIMER_Enable(ID_PID);
   while(totalG < clics)
   {
-   // SOFT_TIMER_Update();
   delay(100);
   pid();
   
@@ -317,8 +313,29 @@ void avancer(float distance)
   }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
- // SOFT_TIMER_Disable(ID_PID);
-  //pidReset();
+ 
+}
+
+void avancer_timer(float distance)
+{
+
+  int32_t clics = distance * CLIC_CM;
+  ENCODER_ReadReset(LEFT);
+  ENCODER_ReadReset(RIGHT);
+  MOTOR_SetSpeed(RIGHT, vitesseD); 
+  MOTOR_SetSpeed(LEFT, 0.5);
+  
+  totalD=0;
+  totalG=0;
+  SOFT_TIMER_Enable(ID_PID);
+  while(totalG < clics)
+  {
+    SOFT_TIMER_Update();
+  }
+  MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
+  SOFT_TIMER_Disable(ID_PID);
+  pidReset();
 }
 
 void getSonarRange()
@@ -896,7 +913,7 @@ void renverser_quille()
   MOTOR_SetSpeed(RIGHT,0);
   tourner(75);
   //Serial.print(dis, 6);
-  avancer(dis + 5);
+  avancer_timer(dis + 5);
   uTurn();
   //uTurn();
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
