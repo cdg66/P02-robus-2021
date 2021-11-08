@@ -182,7 +182,7 @@ void aller_bleu()
   tourner(-90);
   avancer_distance(70);
   tourner(90);
-  avancer(225); //jusqu'à la case bleue
+  avancer_distance(225); //jusqu'à la case bleue
   ouvrir_pince();//lâcher la balle
 
 }
