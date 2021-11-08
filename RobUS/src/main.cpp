@@ -215,6 +215,29 @@ void aller_jaune()
   ouvrir_pince();//lâcher balle
 
 }
+void fermer_pince(){
+
+
+SERVO_Enable(0);
+SERVO_Enable(1);
+delay(1000);
+SERVO_SetAngle(0, 45);
+SERVO_SetAngle(1, 135);
+delay(1000);
+SERVO_Disable(0);
+SERVO_Disable(1);
+
+}
+void ouvrir_pince(){
+
+
+SERVO_Enable(0);
+SERVO_Enable(1);
+delay(1000);
+SERVO_Disable(0);
+SERVO_Disable(1);
+
+}
 /*------------------------------------------------- tourner ----------
 |  Function tourner
 |
