@@ -930,6 +930,8 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR); 
       SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      avancer_distance(5);
+      SOFT_TIMER_Enable(ID_COULEUR);
       
     break;
     default: // erreur 
