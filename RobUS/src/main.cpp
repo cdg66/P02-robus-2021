@@ -21,8 +21,8 @@ Pour les ajouter dans votre projet sur PIO Home
 */
 
 
-#define CLIC_DEGREE 44
-#define CLIC_CM 133.4
+#define CLIC_DEGREE 44.4444444444444     //44
+#define CLIC_CM 133.4                    
 #define KP 0.0001    // teste avec le robot A OK
 #define KI 0.00002
 
@@ -108,6 +108,9 @@ void readMicrophone();
 
 void setup() {
   BoardInit();
+
+  //avancer(25);
+  //tourner(90);
   Serial.write(VERSIONID);
 
   //SoftwareSerial BTSerial(16,17);
@@ -160,7 +163,7 @@ void setup() {
 void loop()
 {
    //avancer(200);
-   SOFT_TIMER_Update();
+  SOFT_TIMER_Update();
 }
 void aller_bleu()
 {
@@ -296,22 +299,26 @@ void avancer(float distance)
 {
 
   int32_t clics = distance * CLIC_CM;
-  ENCODER_Reset(LEFT);
-  ENCODER_Reset(RIGHT);
+  ENCODER_ReadReset(LEFT);
+  ENCODER_ReadReset(RIGHT);
   MOTOR_SetSpeed(RIGHT, vitesseD); 
   MOTOR_SetSpeed(LEFT, 0.5);
   
   totalD=0;
   totalG=0;
-  SOFT_TIMER_Enable(ID_PID);
+ // SOFT_TIMER_Enable(ID_PID);
   while(totalG < clics)
   {
-    SOFT_TIMER_Update();
+   // SOFT_TIMER_Update();
+  delay(100);
+  pid();
+  
+
   }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
-  SOFT_TIMER_Disable(ID_PID);
-  pidReset();
+ // SOFT_TIMER_Disable(ID_PID);
+  //pidReset();
 }
 
 void getSonarRange()
