@@ -151,6 +151,11 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
+
+  SOFT_TIMER_SetCallback(ID_COULEUR, &trouver_aller_couleur);
+  SOFT_TIMER_SetDelay(ID_COULEUR, 50);
+  SOFT_TIMER_SetRepetition(ID_COULEUR, -1);
+
   //SOFT_TIMER_Enable(ID_QUILLE);
   pinMode(PIN_LED_RED,OUTPUT);
   pinMode(PIN_LED_YELLOW,OUTPUT);
