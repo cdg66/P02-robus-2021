@@ -37,7 +37,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define ID_SUIVEURDELIGNE 2
 #define ID_QUILLE 3
 #define ID_MICRO 4
-#define ID_5 5
+#define ID_COULEUR 5
 #define ID_6 6
 #define ID_7 7
 #define ID_8 8
