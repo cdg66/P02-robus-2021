@@ -94,6 +94,7 @@ void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulsel
 void aller_bleu();
 void aller_jaune();
 void aller_rouge();
+void trouver_aller_couleur();
 //fonction détecter couleur. elle renvoie 0 (bleu), 1 (rouge), 2 (jaune).
 
 // fonctions pour suiveur de ligne
