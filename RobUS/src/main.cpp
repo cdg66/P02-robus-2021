@@ -95,6 +95,8 @@ void aller_bleu();
 void aller_jaune();
 void aller_rouge();
 void trouver_aller_couleur();
+void fermer_pince();
+void ouvrir_pince();
 //fonction détecter couleur. elle renvoie 0 (bleu), 1 (rouge), 2 (jaune).
 
 // fonctions pour suiveur de ligne
@@ -171,37 +173,46 @@ void loop()
 }
 void aller_bleu()
 {
-  //allumer DEL bleu
+  digitalWrite(PIN_LED_BLUE, HIGH);//allumer DEL bleu
+  delay(2000);
+  digitalWrite(PIN_LED_BLUE, LOW);
   avancer_distance(40);
-  //prendre baller avec servos moteurs
+  //ouvrir_pince();//prendre baller avec servos moteurs
+  fermer_pince();
   tourner(-90);
   avancer_distance(70);
   tourner(90);
-  avancer_distance(225); //jusqu'à la case bleue
-  //lâcher la balle
+  avancer(225); //jusqu'à la case bleue
+  ouvrir_pince();//lâcher la balle
 
 }
 
 void aller_rouge()
 {
-  //allumer DEL rouge
+  digitalWrite(PIN_LED_RED, HIGH);//allumer DEL rouge
+  delay(2000);
+  digitalWrite(PIN_LED_RED, LOW);
   avancer_distance(40);
-  //prendre balle avec servos moteurs
+  //ouvrir_pince();//prendre balle avec servos moteurs
+  fermer_pince();
   avancer_distance(225); //jusqu'à la case rouge
-  //lâcher balle
+  ouvrir_pince();//lâcher balle
 
 }
 
 void aller_jaune()
 {
-  //allumer DEL jaune
-   avancer_distance(40);
-  //prendre balle avec servos moteurs
+  digitalWrite(PIN_LED_YELLOW, HIGH);//allumer DEL jaune
+  delay(2000);
+  digitalWrite(PIN_LED_YELLOW, LOW);
+  avancer_distance(40);
+  //ouvrir_pince();//prendre balle avec servos moteurs
+  fermer_pince();
   tourner(90);
   avancer_distance(70);
   tourner(-90);
   avancer_distance(225); //jusqu'à la case jaune
-  //lâcher balle
+  ouvrir_pince();//lâcher balle
 
 }
 /*------------------------------------------------- tourner ----------
