@@ -55,7 +55,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_LED_GREEN 41
 
 
-#define SPEED_SUIVEUR 0.3
+#define SPEED_SUIVEUR 0.25
 
 #define micSon  A4 // entre analogique du 5khz
 #define micAmb  A5 // entree analogique du son ambiant
