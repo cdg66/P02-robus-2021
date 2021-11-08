@@ -1,64 +1,20 @@
+// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
+//
+// PIO Unified Debugger
+//
+// Documentation: https://docs.platformio.org/page/plus/debugging.html
+// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
+
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "platformio-debug",
-      "request": "launch",
-      "name": "PIO Debug",
-      "executable": "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
-      "projectEnvName": "megaatmega2560",
-      "toolchainBinDir": "C:/Users/claud/.platformio/packages/toolchain-atmelavr/bin",
-      "internalConsoleOptions": "openOnSessionStart",
-      "preLaunchTask": {
-        "type": "PlatformIO",
-        "task": "Pre-Debug"
-      }
-    },
-    {
-      "type": "platformio-debug",
-      "request": "launch",
-      "name": "PIO Debug (skip Pre-Debug)",
-      "executable": "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
-      "projectEnvName": "megaatmega2560",
-      "toolchainBinDir": "C:/Users/claud/.platformio/packages/toolchain-atmelavr/bin",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
-    {
-      "type": "platformio-debug",
-      "request": "launch",
-      "name": "PIO Debug (without uploading)",
-      "executable": "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
-      "projectEnvName": "megaatmega2560",
-      "toolchainBinDir": "C:/Users/claud/.platformio/packages/toolchain-atmelavr/bin",
-      "internalConsoleOptions": "openOnSessionStart",
-      "loadMode": "manual"
-    },
-    {
-      "name": "C/C++ Runner: Debug Session",
-      "type": "cppdbg",
-      "request": "launch",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "c:\\Users\\Gring\\OneDrive\\Documents\\GitHub\\P02-robus-2021\\RobUS",
-      "environment": [],
-      "program": "c:\\Users\\Gring\\OneDrive\\Documents\\GitHub\\P02-robus-2021\\RobUS\\build\\Debug\\outDebug",
-      "internalConsoleOptions": "openOnSessionStart",
-      "MIMode": "gdb",
-      "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
-      "externalConsole": false,
-      "setupCommands": [
+    "version": "0.2.0",
+    "configurations": [
         {
-<<<<<<< Updated upstream
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-=======
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
+            "executable": "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
             "projectEnvName": "megaatmega2560",
-            "toolchainBinDir": "C:/Users/antoi/.platformio/packages/toolchain-atmelavr/bin",
+            "toolchainBinDir": "C:/Users/szabo/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart",
             "preLaunchTask": {
                 "type": "PlatformIO",
@@ -69,23 +25,20 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
+            "executable": "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
             "projectEnvName": "megaatmega2560",
-            "toolchainBinDir": "C:/Users/antoi/.platformio/packages/toolchain-atmelavr/bin",
+            "toolchainBinDir": "C:/Users/szabo/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (without uploading)",
-            "executable": "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
+            "executable": "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/build/megaatmega2560/firmware.elf",
             "projectEnvName": "megaatmega2560",
-            "toolchainBinDir": "C:/Users/antoi/.platformio/packages/toolchain-atmelavr/bin",
+            "toolchainBinDir": "C:/Users/szabo/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart",
             "loadMode": "manual"
->>>>>>> Stashed changes
         }
-      ]
-    }
-  ]
+    ]
 }

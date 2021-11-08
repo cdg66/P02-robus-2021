@@ -1,102 +1,42 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
-<<<<<<< Updated upstream
-  "configurations": [
-    {
-      "name": "windows-gcc-x64",
-      "includePath": [
-        "${workspaceFolder}/**",
-        "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/include",
-        "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/src",
-        "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-        "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-        "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-        "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/TLV493D-Magnetic-Sensor/src",
-        "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library",
-        "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-        "C:/Users/claud/.platformio/packages/framework-arduino-avr/cores/arduino",
-        "C:/Users/claud/.platformio/packages/framework-arduino-avr/variants/mega",
-        "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit BusIO",
-        "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit TCS34725",
-        "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-        "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/HID/src",
-        ""
-      ],
-      "browse": {
-        "limitSymbolsToIncludedHeaders": true,
-        "path": [
-          "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/include",
-          "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/src",
-          "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-          "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-          "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-          "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/TLV493D-Magnetic-Sensor/src",
-          "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library",
-          "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-          "C:/Users/claud/.platformio/packages/framework-arduino-avr/cores/arduino",
-          "C:/Users/claud/.platformio/packages/framework-arduino-avr/variants/mega",
-          "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit BusIO",
-          "c:/Users/claud/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit TCS34725",
-          "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-          "C:/Users/claud/.platformio/packages/framework-arduino-avr/libraries/HID/src",
-          ""
-        ]
-      },
-      "defines": [
-        "PLATFORMIO=50202",
-        "ARDUINO_AVR_MEGA2560",
-        "F_CPU=16000000L",
-        "ARDUINO_ARCH_AVR",
-        "ARDUINO=10808",
-        "__AVR_ATmega2560__",
-        ""
-      ],
-      "cStandard": "c11",
-      "cppStandard": "c++11",
-      "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
-      "compilerArgs": [
-        "-Wall",
-        "-Wextra",
-        "-Wpedantic"
-      ],
-      "intelliSenseMode": "windows-gcc-x64"
-    }
-  ],
-  "version": 4
-}
-=======
     "configurations": [
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/include",
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/src",
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/TLV493D-Magnetic-Sensor/src",
-                "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/cores/arduino",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/variants/mega",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-                "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/include",
+                "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/src",
+                "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
+                "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/TLV493D-Magnetic-Sensor/src",
+                "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library",
+                "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                "C:/Users/szabo/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "C:/Users/szabo/.platformio/packages/framework-arduino-avr/variants/mega",
+                "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                 ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/include",
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/src",
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/TLV493D-Magnetic-Sensor/src",
-                    "C:/Users/antoi/Desktop/Uni/2_A2021_S1/Projet_S1/Code Github/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/cores/arduino",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/variants/mega",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
-                    "C:/Users/antoi/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                    "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/include",
+                    "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/src",
+                    "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
+                    "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/TLV493D-Magnetic-Sensor/src",
+                    "C:/Users/szabo/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library",
+                    "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    "C:/Users/szabo/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "C:/Users/szabo/.platformio/packages/framework-arduino-avr/variants/mega",
+                    "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "C:/Users/szabo/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                     ""
                 ]
             },
@@ -111,7 +51,7 @@
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
-            "compilerPath": "C:/Users/antoi/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+            "compilerPath": "C:/Users/szabo/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
             "compilerArgs": [
                 "-mmcu=atmega2560",
                 ""
@@ -120,4 +60,3 @@
     ],
     "version": 4
 }
->>>>>>> Stashed changes
