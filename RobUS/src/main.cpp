@@ -7,7 +7,7 @@
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
-#define VERSIONID "Version main"
+#define VERSIONID "Version je veux me tuer\n"
 /* 
 Avant de compiler ajouter les librairies:
 - Adafruit PWM Servo Driver Library 
@@ -25,8 +25,8 @@ Pour les ajouter dans votre projet sur PIO Home
 
 #define CLIC_DEGREE 44     //44
 #define CLIC_CM 133.4                    
-#define KP 0.0002302    // teste avec le robot A OK
-#define KI 0.0000000000001
+#define KP 0.002   // teste avec le robot A OK
+#define KI 0.0000000000000
 //KP 0.00002 KI 0.00001 // pas ok
 //KP 0.00002 KI 0.0000001 // pas ok
 //KP 0.00002 KI 0.0000000 // 
@@ -154,8 +154,8 @@ void setup() {
   SOFT_TIMER_SetDelay(ID_PID, 100);
   SOFT_TIMER_SetRepetition(ID_PID, -1);
 
-  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
-  //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
+  //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
+  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
@@ -168,7 +168,7 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
-  //SOFT_TIMER_Enable(ID_QUILLE);
+  SOFT_TIMER_Enable(ID_QUILLE);
 
   SOFT_TIMER_SetCallback(ID_COULEUR, &trouver_aller_couleur);
   SOFT_TIMER_SetDelay(ID_COULEUR, 50);
@@ -180,7 +180,8 @@ void setup() {
   pinMode(PIN_LED_YELLOW,OUTPUT);
   pinMode(PIN_LED_BLUE,OUTPUT);
   pinMode(PIN_LED_GREEN,OUTPUT);
-
+  //tourner(-90);
+  //avancer_distance(320);
 }
 
 
@@ -225,12 +226,14 @@ void aller_jaune()
   delay(2000);
   digitalWrite(PIN_LED_YELLOW, LOW);
   ouvrir_pince();
-  avancer_distance(24);
+  avancer_distance(26);
   //ouvrir_pince();//prendre balle avec servos moteurs
   fermer_pince();
-  tourner(90);
-  avancer_distance(15);
+  tourner(94);
+  delay(500);
+  avancer_distance(17);
   tourner(-90);
+  delay(500);
   avancer_distance(190); //jusqu'à la case jaune
   ouvrir_pince();//lâcher balle
 
@@ -364,7 +367,6 @@ void avancer_distance(float distance)
   ENCODER_ReadReset(RIGHT);
   MOTOR_SetSpeed(RIGHT, vitesseD); 
   MOTOR_SetSpeed(LEFT, 0.3);
-  
   totalD=0;
   totalG=0;
   while(totalG < clics)
@@ -374,6 +376,7 @@ void avancer_distance(float distance)
   
 
   }
+  pidReset();
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
  
@@ -433,16 +436,31 @@ void getSonarRange()
 *-------------------------------------------------------------------*/
 void pid()
 {
-  static int32_t erreurP, erreurI , pulseG, pulseD, Correction;
+  static int32_t erreurP, erreurI , pulseG, pulseD;
+  float Correction;
 
-  pulseD=ENCODER_ReadReset(RIGHT);
-  pulseG=ENCODER_ReadReset(LEFT);
-  
-  totalG += pulseG; 
-  totalD += pulseD;
+  pulseD = ENCODER_ReadReset(RIGHT);
+  //Serial.print(pulseD, DEC);
+  //Serial.print("\n\r");
+  pulseG = ENCODER_ReadReset(LEFT);
+  //Serial.print(pulseG, DEC);
+  //Serial.print("\n\r");
+
+
+  totalG = totalG + pulseG; 
+  //Serial.print(totalG, DEC);
+  //Serial.print("\n\r");
+  totalD = totalD + pulseD;
+  //Serial.print(totalD, DEC);
+  //Serial.print("\n\r");
   erreurP = pulseG - pulseD;
-  erreurI = totalG - totalD;
+  //Serial.print(erreurP, DEC);
+  //Serial.print("\n\r");
+  //erreurI = erreurP * 100;
+  //erreurI = totalG - totalD;
   Correction = (erreurP*KP) + (erreurI*KI);
+  //Serial.print(Correction, DEC);
+  //Serial.print("\n\r");
   vitesseD = vitesseD + Correction;
   MOTOR_SetSpeed(RIGHT,vitesseD);
   //ENCODER_Reset(LEFT);
@@ -466,7 +484,7 @@ void pidReset()
 {
   totalG = 0;
   totalD = 0;
-  vitesseD = 0.50;
+  vitesseD = 0.30;
 }
 /*------------------------------------------------- uTurn ---------------
 |  Function uTurn
