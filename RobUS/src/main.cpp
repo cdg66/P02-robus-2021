@@ -46,7 +46,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define ID_QUILLE 3
 #define ID_MICRO 4
 #define ID_COULEUR 5
-#define ID_6 6
+#define ID_INTERSECTION 6
 #define ID_7 7
 #define ID_8 8
 #define ID_9 9
@@ -55,7 +55,12 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_FOLLOW_RED 37
 #define PIN_FOLLOW_YELLOW 38
 #define PIN_FOLLOW_BLUE 39
+#define PIN_FOLLOW_INTERSECT 40
 
+//define pour les code couleur
+#define BLEU 0
+#define ROUGE 1
+#define JAUNE 2
 
 #define PIN_LED_RED  10
 #define PIN_LED_YELLOW 11
@@ -119,16 +124,18 @@ uint8_t getFollowLineValue();
 void followLineCallback(void);
 void GetBackOnLineCallback(void);
 void GoToCollorCallback(void);
+void intersection(void);
 
 void renverser_quille();
 
 void readMicrophone();
 
+void retourner_debut(int couleur);
+
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
-  
-  fermer_pince();
+
   
   //SoftwareSerial BTSerial(16,17);
   //Serial2.begin(115200);
@@ -170,12 +177,17 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
-  SOFT_TIMER_Enable(ID_QUILLE);
+  //SOFT_TIMER_Enable(ID_QUILLE);
 
   SOFT_TIMER_SetCallback(ID_COULEUR, &trouver_aller_couleur);
   SOFT_TIMER_SetDelay(ID_COULEUR, 50);
   SOFT_TIMER_SetRepetition(ID_COULEUR, 1);
   //SOFT_TIMER_Enable(ID_COULEUR);
+
+  SOFT_TIMER_SetCallback(ID_INTERSECTION, &intersection);
+  SOFT_TIMER_SetDelay(ID_INTERSECTION, 10);
+  SOFT_TIMER_SetRepetition(ID_INTERSECTION, -1);
+  SOFT_TIMER_Enable(ID_INTERSECTION);
  
 
   pinMode(PIN_LED_RED,OUTPUT);
@@ -191,14 +203,47 @@ void loop()
 {
   SOFT_TIMER_Update();
 }
+
+
+void retourner_debut(int couleur)
+{
+
+  SOFT_TIMER_Disable(ID_COULEUR);
+  switch (couleur)
+  {
+  case 0:
+    uTurn();
+    avancer_distance(200);
+
+
+    
+    break;
+  case 1:
+    uTurn();
+    avancer_distance(200);
+
+
+    
+    break;
+  case 2:
+    uTurn();
+    avancer_distance(200);
+
+
+    
+    break;   
+  default:
+    break;
+  }
+
+
+}
+
 void aller_bleu()
 {
   digitalWrite(PIN_LED_BLUE, HIGH);//allumer DEL bleu
-  //delay(2000);
-  //digitalWrite(PIN_LED_BLUE, LOW);
   ouvrir_pince();
   avancer_distance(20);
-  //ouvrir_pince();//prendre baller avec servos moteurs
   fermer_pince();
   tourner(-90);
   
@@ -207,30 +252,27 @@ void aller_bleu()
   
   avancer_distance(200); //jusqu'à la case bleue
   ouvrir_pince();//lâcher la balle
+
+  retourner_debut(BLEU);
 }
 
 void aller_rouge()
 {
   digitalWrite(PIN_LED_RED, HIGH);//allumer DEL rouge
-  //delay(2000);
-  //digitalWrite(PIN_LED_RED, LOW);
   ouvrir_pince();
-  avancer_distance(24);
-  //ouvrir_pince();//prendre balle avec servos moteurs
+  avancer_distance(20);
   fermer_pince();
   avancer_distance(215); //jusqu'à la case rouge
   ouvrir_pince();//lâcher balle
 
+  retourner_debut(ROUGE);
 }
 
 void aller_jaune()
 {
   digitalWrite(PIN_LED_YELLOW, HIGH);//allumer DEL jaune
-  //delay(2000);
-  //digitalWrite(PIN_LED_YELLOW, LOW);
   ouvrir_pince();
   avancer_distance(20);
-  //ouvrir_pince();//prendre balle avec servos moteurs
   fermer_pince();
   tourner(90);
   
@@ -240,7 +282,11 @@ void aller_jaune()
   avancer_distance(200); //jusqu'à la case jaune
   ouvrir_pince();//lâcher balle
 
+  retourner_debut(JAUNE);
 }
+
+
+
 void fermer_pince(){
 
 
@@ -840,12 +886,16 @@ void followLineCallback(void)
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
-    case 7: // erreur
+    case 7: // Rendu sur la feuille de couleur
       CompteurCallback = 1;
-      /*speedL = 0;
+      speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);  */
+      MOTOR_SetSpeed(RIGHT, speedR); 
+      delay(100);
+      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      avancer_distance(20);
+      SOFT_TIMER_Enable(ID_COULEUR); 
 
     break;
     default: // erreur 
@@ -891,10 +941,26 @@ void GetBackOnLineCallback(void)
     //tournerSelf(5,0.2);
     
     tournerSuiveur(5);
-  }while (getFollowLineValue() & 2 );
+  }while (getFollowLineValue() != 2 );
   //
-  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
+  //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
+  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
+  SOFT_TIMER_Enable(ID_INTERSECTION);
   //SOFT_TIMER_Disable(ID_QUILLE);
+}
+
+void intersection(void)
+{
+  if(digitalRead(PIN_FOLLOW_INTERSECT) == 1)
+  {
+    SOFT_TIMER_Disable(ID_INTERSECTION);
+    AX_BuzzerON(444, 1000);
+    SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+    tourner(-90);
+    SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+
+  }
+
 }
 
 void GoToCollorCallback(void)
@@ -994,7 +1060,7 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 7: // on est a la feulle de couleur
-      tourner(-85);
+      //tourner(-85);
       CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
@@ -1018,9 +1084,10 @@ void renverser_quille()
 {
   static float dis;
   //delay(1000);
-  //Serial.println(getSonarRange(0));
+  Serial.println(getSonarRange(0));
   //avancer(10);
   dis = getSonarRange(0);
+  
   if(dis>30)
   {
     return;
@@ -1054,6 +1121,7 @@ void readMicrophone( )
   Serial.print(F("mic diff ")); Serial.println(difference_son);
   if (difference_son >= 60) 
   {
+    //SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
     //Serial.println("mic detected"); 
     //Ouverture du voltage des LEDS
     digitalWrite(PIN_LED_RED, HIGH);
@@ -1062,6 +1130,7 @@ void readMicrophone( )
     SOFT_TIMER_Enable(ID_QUILLE);
     //compteurCallback++;
     SOFT_TIMER_Disable(ID_MICRO);
+    //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   }
   
 }
