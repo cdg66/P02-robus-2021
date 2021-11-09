@@ -87,6 +87,8 @@ float vitesseD = 0.30;
 // mouvements
 void tourner(float angle);
 void tournerSuiveur(float angle);
+void tournerSelf(float angle,float speed);
+
 void avancer_distance (float distance);
 void avancer_timer (float distance);
 void uTurn();
@@ -192,25 +194,26 @@ void loop()
 void aller_bleu()
 {
   digitalWrite(PIN_LED_BLUE, HIGH);//allumer DEL bleu
-  delay(2000);
-  digitalWrite(PIN_LED_BLUE, LOW);
+  //delay(2000);
+  //digitalWrite(PIN_LED_BLUE, LOW);
   ouvrir_pince();
-  avancer_distance(24);
+  avancer_distance(20);
   //ouvrir_pince();//prendre baller avec servos moteurs
   fermer_pince();
   tourner(-90);
-  avancer_distance(5);
-  tourner(90);
-  avancer_distance(190); //jusqu'à la case bleue
+  delay(100);
+  avancer_distance(22);
+  tourner(91);
+  delay(100);
+  avancer_distance(200); //jusqu'à la case bleue
   ouvrir_pince();//lâcher la balle
-
 }
 
 void aller_rouge()
 {
   digitalWrite(PIN_LED_RED, HIGH);//allumer DEL rouge
-  delay(2000);
-  digitalWrite(PIN_LED_RED, LOW);
+  //delay(2000);
+  //digitalWrite(PIN_LED_RED, LOW);
   ouvrir_pince();
   avancer_distance(24);
   //ouvrir_pince();//prendre balle avec servos moteurs
@@ -223,18 +226,18 @@ void aller_rouge()
 void aller_jaune()
 {
   digitalWrite(PIN_LED_YELLOW, HIGH);//allumer DEL jaune
-  delay(2000);
-  digitalWrite(PIN_LED_YELLOW, LOW);
+  //delay(2000);
+  //digitalWrite(PIN_LED_YELLOW, LOW);
   ouvrir_pince();
-  avancer_distance(26);
+  avancer_distance(22);
   //ouvrir_pince();//prendre balle avec servos moteurs
   fermer_pince();
-  tourner(94);
-  delay(500);
-  avancer_distance(17);
+  tourner(90);
+  delay(100);
+  avancer_distance(15);
   tourner(-90);
-  delay(500);
-  avancer_distance(190); //jusqu'à la case jaune
+  delay(100);
+  avancer_distance(200); //jusqu'à la case jaune
   ouvrir_pince();//lâcher balle
 
 }
@@ -336,6 +339,31 @@ void tournerSuiveur(float angle)
   }
   else{
   MOTOR_SetSpeed(LEFT, 0.2);
+
+  while(ENCODER_Read(LEFT)<clic)
+  {}
+  }
+  MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
+}
+
+void tournerSelf(float angle,float speed)
+{
+  int32_t clic = CLIC_DEGREE * abs(angle);
+  ENCODER_Reset(RIGHT);
+  ENCODER_Reset(LEFT);
+  MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0);
+  if(angle<0)
+  {
+  MOTOR_SetSpeed(RIGHT, speed);
+  MOTOR_SetSpeed(LEFT, -(speed));
+  while(ENCODER_Read(RIGHT)<clic)
+  {}
+  }
+  else{
+  MOTOR_SetSpeed(RIGHT, -(speed));
+  MOTOR_SetSpeed(LEFT, speed);
 
   while(ENCODER_Read(LEFT)<clic)
   {}
@@ -858,8 +886,9 @@ void GetBackOnLineCallback(void)
   }
   do
   {
-    tournerSuiveur(5);
-  }while (getFollowLineValue() != 2);
+    tournerSelf(5,0.2);
+    //tournerSuiveur(5);
+  }while (getFollowLineValue() && 2);
   delay(100);
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
   //SOFT_TIMER_Disable(ID_QUILLE);
@@ -1000,6 +1029,7 @@ void renverser_quille()
   SOFT_TIMER_Disable(ID_QUILLE);
   MOTOR_SetSpeed(LEFT,0);
   MOTOR_SetSpeed(RIGHT,0);
+  //tournerSelf(90);
   tourner(75);
   //Serial.print(dis, 6);
   avancer_timer(dis + 5);
