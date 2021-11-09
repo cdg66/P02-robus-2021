@@ -63,7 +63,7 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_LED_GREEN 41
 
 
-#define SPEED_SUIVEUR 0.25
+#define SPEED_SUIVEUR 0.3
 
 #define micSon  A4 // entre analogique du 5khz
 #define micAmb  A5 // entree analogique du son ambiant
@@ -158,7 +158,7 @@ void setup() {
 
   //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
-  SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
+  SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 5);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   
@@ -201,10 +201,10 @@ void aller_bleu()
   //ouvrir_pince();//prendre baller avec servos moteurs
   fermer_pince();
   tourner(-90);
-  delay(100);
+  
   avancer_distance(22);
   tourner(91);
-  delay(100);
+  
   avancer_distance(200); //jusqu'à la case bleue
   ouvrir_pince();//lâcher la balle
 }
@@ -229,14 +229,14 @@ void aller_jaune()
   //delay(2000);
   //digitalWrite(PIN_LED_YELLOW, LOW);
   ouvrir_pince();
-  avancer_distance(22);
+  avancer_distance(20);
   //ouvrir_pince();//prendre balle avec servos moteurs
   fermer_pince();
   tourner(90);
-  delay(100);
+  
   avancer_distance(15);
   tourner(-90);
-  delay(100);
+  
   avancer_distance(200); //jusqu'à la case jaune
   ouvrir_pince();//lâcher balle
 
@@ -391,6 +391,7 @@ void avancer_distance(float distance)
 {
 
   int32_t clics = distance * CLIC_CM;
+  delay(100);
   ENCODER_ReadReset(LEFT);
   ENCODER_ReadReset(RIGHT);
   MOTOR_SetSpeed(RIGHT, vitesseD); 
@@ -811,6 +812,7 @@ void followLineCallback(void)
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
+      speedR = SPEED_SUIVEUR + 0.2;
       speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
@@ -822,10 +824,10 @@ void followLineCallback(void)
     break;
     case 5: // erreur gauche et droit sont actif mais pas celui du centre 
       CompteurCallback = 1;
-      speedL = 0;
+     /*  speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR); */
     break;
     case 6: // on est un peu a droite, on tourne un peu a gauche
       CompteurCallback = 1;
@@ -840,18 +842,18 @@ void followLineCallback(void)
     break;
     case 7: // erreur
       CompteurCallback = 1;
-      speedL = 0;
+      /*speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR); 
+      MOTOR_SetSpeed(RIGHT, speedR);  */
 
     break;
     default: // erreur 
       CompteurCallback = 1;
-      speedL = 0;
+      /*speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR); */
     break;
   }
 }
@@ -886,10 +888,11 @@ void GetBackOnLineCallback(void)
   }
   do
   {
-    tournerSelf(5,0.2);
-    //tournerSuiveur(5);
-  }while (getFollowLineValue() && 2);
-  delay(100);
+    //tournerSelf(5,0.2);
+    
+    tournerSuiveur(5);
+  }while (getFollowLineValue() & 2 );
+  //
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
   //SOFT_TIMER_Disable(ID_QUILLE);
 }
@@ -898,9 +901,10 @@ void GoToCollorCallback(void)
 {
   static int16_t CompteurCallback = 0; 
   static int16_t Compteur07 = 0; 
+
   uint8_t ValeurSuiveur;
-  static float speedL = SPEED_SUIVEUR;
-  static float speedR = SPEED_SUIVEUR;
+  static float speedL = 0.17;
+  static float speedR = 0.17;
   if (CompteurCallback == 0)
   {
     //Serial.print("entre init callback\n");
@@ -917,10 +921,10 @@ void GoToCollorCallback(void)
   switch (ValeurSuiveur)
   {
     case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
-      speedL = SPEED_SUIVEUR;
+      /* speedL = SPEED_SUIVEUR;
       speedR = SPEED_SUIVEUR;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR);*/
       if (CompteurCallback >= 1000)
       {
         speedL = 0;
@@ -960,6 +964,7 @@ void GoToCollorCallback(void)
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
+      speedR = SPEED_SUIVEUR + 0.2;
       speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
@@ -970,16 +975,16 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 5: // erreur gauche et droit sont actif mais pas celui du centre 
-      CompteurCallback = 1;
+       CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR); 
     break;
     case 6: // on est un peu a droite, on tourne un peu a gauche
       //tourner(-95);
       CompteurCallback = 1;
-      speedL = speedL - SPEED_SUIVEUR;
+       speedL = speedL - SPEED_SUIVEUR;
       if (speedL < 0)
       {
         speedL = 0;
@@ -989,27 +994,23 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 7: // on est a la feulle de couleur
-      if (Compteur07 == 0)
-      {
-        tourner(-95);
-        Compteur07++;
-        return;
-      }
+      tourner(-85);
       CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR); 
+      delay(100);
       SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-      avancer_distance(15);
-      SOFT_TIMER_Enable(ID_COULEUR);
+      avancer_distance(30);
+      SOFT_TIMER_Enable(ID_COULEUR);  
     break;
     default: // erreur 
-      CompteurCallback = 1;
+      /* CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+      MOTOR_SetSpeed(RIGHT, speedR); */
     break;
   }
 }
@@ -1030,8 +1031,9 @@ void renverser_quille()
   MOTOR_SetSpeed(LEFT,0);
   MOTOR_SetSpeed(RIGHT,0);
   //tournerSelf(90);
-  tourner(75);
+  tourner(90);
   //Serial.print(dis, 6);
+  delay(100);
   avancer_timer(dis + 5);
   uTurn();
   //uTurn();
@@ -1043,7 +1045,6 @@ void renverser_quille()
 void readMicrophone( ) 
 { /* function readMicrophone : allume les led quand le sifflet est détecté*/
   static int mic_son_val,mic_amb_val;
-  static int compteurCallback = 0;
   mic_son_val = analogRead(micSon);
   mic_amb_val = analogRead(micAmb);
   int difference_son = mic_son_val - mic_amb_val ; 
@@ -1067,22 +1068,22 @@ void readMicrophone( )
 
 void trouver_aller_couleur()
 {
- Serial.begin(9600);
-tcs.setIntegrationTime(TCS34725_INTEGRATIONTIME_614MS);
-delay(154); // Delay for one old integ. time period (to finish old reading)
-delay(615); // Delay for one new integ. time period (to allow new reading)
-tcs.getRawData(&r, &g, &b, &c);
-if(g>b && b>r)
-{
-  aller_bleu();
-}
-else if(r>g && g>b)
-{
-  aller_rouge();
-}
-else if(g>=r && r>b)
-{
-  aller_jaune();
-}
+  //avancer_distance(15);
+  tcs.setIntegrationTime(TCS34725_INTEGRATIONTIME_614MS);
+  delay(154); // Delay for one old integ. time period (to finish old reading)
+  delay(615); // Delay for one new integ. time period (to allow new reading)
+  tcs.getRawData(&r, &g, &b, &c);
+  if(g>b && b>r)
+  {
+    aller_bleu();
+  }
+  else if(r>g && g>b)
+  {
+    aller_rouge();
+  }
+  else if(g>=r && r>b)
+  {
+    aller_jaune();
+  }
 
 }
