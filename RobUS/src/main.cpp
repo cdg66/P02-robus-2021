@@ -23,11 +23,17 @@ Pour les ajouter dans votre projet sur PIO Home
 */
 
 
-#define CLIC_DEGREE 44.4444444444444     //44
+#define CLIC_DEGREE 44     //44
 #define CLIC_CM 133.4                    
-#define KP 0.0001    // teste avec le robot A OK
-#define KI 0.00002
-
+#define KP 0.0002302    // teste avec le robot A OK
+#define KI 0.0000000000001
+//KP 0.00002 KI 0.00001 // pas ok
+//KP 0.00002 KI 0.0000001 // pas ok
+//KP 0.00002 KI 0.0000000 // 
+//KP 0.00023 KI 0.0000000 // pas pire
+//KP 0.000233 KI 0.0000000 // pas ok
+//KP 0.0002303 KI 0.0000000 // pas ok
+//KP 0.000230201 KI 0.0000000000001 // pas ok
 // define pour les servo
 #define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
 #define SERVOMAX  600 // This is the 'maximum' pulse length count (out of 4096)
@@ -75,7 +81,7 @@ float valeurSonar;
 
 // value of encoder needed for avancer() and pid()
 int32_t totalG, totalD;
-float vitesseD = 0.50;
+float vitesseD = 0.30;
 // prototype de fonctions
 
 // mouvements
@@ -119,7 +125,9 @@ void readMicrophone();
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
-
+  
+  fermer_pince();
+  
   //SoftwareSerial BTSerial(16,17);
   //Serial2.begin(115200);
   //BTSerial.begin(115200);
@@ -146,7 +154,8 @@ void setup() {
   SOFT_TIMER_SetDelay(ID_PID, 100);
   SOFT_TIMER_SetRepetition(ID_PID, -1);
 
-  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
+  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
+  //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
@@ -159,22 +168,24 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
   SOFT_TIMER_SetRepetition(ID_QUILLE, -1);
-  SOFT_TIMER_Enable(ID_QUILLE);
-  
+  //SOFT_TIMER_Enable(ID_QUILLE);
+
   SOFT_TIMER_SetCallback(ID_COULEUR, &trouver_aller_couleur);
   SOFT_TIMER_SetDelay(ID_COULEUR, 50);
-  SOFT_TIMER_SetRepetition(ID_COULEUR, -1);
+  SOFT_TIMER_SetRepetition(ID_COULEUR, 1);
+  //SOFT_TIMER_Enable(ID_COULEUR);
  
+
   pinMode(PIN_LED_RED,OUTPUT);
   pinMode(PIN_LED_YELLOW,OUTPUT);
   pinMode(PIN_LED_BLUE,OUTPUT);
   pinMode(PIN_LED_GREEN,OUTPUT);
+
 }
 
 
 void loop()
 {
-   //avancer_distance(200);
   SOFT_TIMER_Update();
 }
 void aller_bleu()
@@ -182,13 +193,14 @@ void aller_bleu()
   digitalWrite(PIN_LED_BLUE, HIGH);//allumer DEL bleu
   delay(2000);
   digitalWrite(PIN_LED_BLUE, LOW);
-  avancer_distance(40);
+  ouvrir_pince();
+  avancer_distance(24);
   //ouvrir_pince();//prendre baller avec servos moteurs
   fermer_pince();
   tourner(-90);
-  avancer_distance(70);
+  avancer_distance(5);
   tourner(90);
-  avancer_distance(225); //jusqu'à la case bleue
+  avancer_distance(190); //jusqu'à la case bleue
   ouvrir_pince();//lâcher la balle
 
 }
@@ -198,10 +210,11 @@ void aller_rouge()
   digitalWrite(PIN_LED_RED, HIGH);//allumer DEL rouge
   delay(2000);
   digitalWrite(PIN_LED_RED, LOW);
-  avancer_distance(40);
+  ouvrir_pince();
+  avancer_distance(24);
   //ouvrir_pince();//prendre balle avec servos moteurs
   fermer_pince();
-  avancer_distance(225); //jusqu'à la case rouge
+  avancer_distance(215); //jusqu'à la case rouge
   ouvrir_pince();//lâcher balle
 
 }
@@ -211,13 +224,14 @@ void aller_jaune()
   digitalWrite(PIN_LED_YELLOW, HIGH);//allumer DEL jaune
   delay(2000);
   digitalWrite(PIN_LED_YELLOW, LOW);
-  avancer_distance(40);
+  ouvrir_pince();
+  avancer_distance(24);
   //ouvrir_pince();//prendre balle avec servos moteurs
   fermer_pince();
   tourner(90);
-  avancer_distance(70);
+  avancer_distance(15);
   tourner(-90);
-  avancer_distance(225); //jusqu'à la case jaune
+  avancer_distance(190); //jusqu'à la case jaune
   ouvrir_pince();//lâcher balle
 
 }
@@ -227,8 +241,8 @@ void fermer_pince(){
 SERVO_Enable(0);
 SERVO_Enable(1);
 delay(1000);
-SERVO_SetAngle(0, 45);
-SERVO_SetAngle(1, 135);
+SERVO_SetAngle(0, 35);
+SERVO_SetAngle(1, 150);
 delay(1000);
 SERVO_Disable(0);
 SERVO_Disable(1);
@@ -239,6 +253,9 @@ void ouvrir_pince(){
 
 SERVO_Enable(0);
 SERVO_Enable(1);
+delay(1000);
+SERVO_SetAngle(0, 90);
+SERVO_SetAngle(1, 90);
 delay(1000);
 SERVO_Disable(0);
 SERVO_Disable(1);
@@ -346,7 +363,7 @@ void avancer_distance(float distance)
   ENCODER_ReadReset(LEFT);
   ENCODER_ReadReset(RIGHT);
   MOTOR_SetSpeed(RIGHT, vitesseD); 
-  MOTOR_SetSpeed(LEFT, 0.5);
+  MOTOR_SetSpeed(LEFT, 0.3);
   
   totalD=0;
   totalG=0;
@@ -424,12 +441,12 @@ void pid()
   totalG += pulseG; 
   totalD += pulseD;
   erreurP = pulseG - pulseD;
-  erreurI = totalG -totalD;
+  erreurI = totalG - totalD;
   Correction = (erreurP*KP) + (erreurI*KI);
   vitesseD = vitesseD + Correction;
   MOTOR_SetSpeed(RIGHT,vitesseD);
-  ENCODER_Reset(LEFT);
-  ENCODER_Reset(RIGHT);
+  //ENCODER_Reset(LEFT);
+  //ENCODER_Reset(RIGHT);
 
 }
 /*------------------------------------------------- pidReset ---------------
@@ -937,7 +954,7 @@ void GoToCollorCallback(void)
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR); 
       SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-      avancer_distance(20);
+      avancer_distance(15);
       SOFT_TIMER_Enable(ID_COULEUR);
     break;
     default: // erreur 
