@@ -68,13 +68,14 @@ Pour les ajouter dans votre projet sur PIO Home
 #define PIN_LED_GREEN 41
 
 
-#define SPEED_SUIVEUR 0.3
 
 #define micSon  A4 // entre analogique du 5khz
 #define micAmb  A5 // entree analogique du son ambiant
 
 uint16_t r, g, b, c;
 uint8_t i;
+uint8_t chercheCouleur = 0;
+float SPEED_SUIVEUR = 0.4;
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_60X);
 
 // objet pour le Mag sensor
@@ -86,7 +87,8 @@ float valeurSonar;
 
 // value of encoder needed for avancer() and pid()
 int32_t totalG, totalD;
-float vitesseD = 0.30;
+float vitesseD = 0.35;
+float vitesseG = 0.35;
 // prototype de fonctions
 
 // mouvements
@@ -135,7 +137,8 @@ void retourner_debut(int couleur);
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
-
+  
+  fermer_pince();
   
   //SoftwareSerial BTSerial(16,17);
   //Serial2.begin(115200);
@@ -155,6 +158,7 @@ void setup() {
   Serial.print(str);
   } */
 
+  
   MagSensor_Init();
   SERVO_Init(&pwm);
   followLineInit();
@@ -165,14 +169,14 @@ void setup() {
 
   //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
-  SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 5);
+  SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   
   SOFT_TIMER_SetCallback(ID_MICRO, &readMicrophone);
   SOFT_TIMER_SetDelay(ID_MICRO, 20);
   SOFT_TIMER_SetRepetition(ID_MICRO, -1);
-  //SOFT_TIMER_Enable(ID_MICRO);
+  SOFT_TIMER_Enable(ID_MICRO);
 
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
@@ -187,7 +191,7 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_INTERSECTION, &intersection);
   SOFT_TIMER_SetDelay(ID_INTERSECTION, 10);
   SOFT_TIMER_SetRepetition(ID_INTERSECTION, -1);
-  SOFT_TIMER_Enable(ID_INTERSECTION);
+  //SOFT_TIMER_Enable(ID_INTERSECTION);
  
 
   pinMode(PIN_LED_RED,OUTPUT);
@@ -196,12 +200,16 @@ void setup() {
   pinMode(PIN_LED_GREEN,OUTPUT);
   //tourner(-90);
   //avancer_distance(320);
+  
 }
 
 
 void loop()
 {
   SOFT_TIMER_Update();
+  //float dist = getSonarRange(0);
+  //Serial.println(dist);
+  //delay(100);
 }
 
 
@@ -209,28 +217,49 @@ void retourner_debut(int couleur)
 {
 
   SOFT_TIMER_Disable(ID_COULEUR);
-  switch (couleur)
+
+
+  MOTOR_SetSpeed(LEFT, -0.3);
+  MOTOR_SetSpeed(RIGHT, -0.3);
+  delay(600);
+  MOTOR_SetSpeed(LEFT, 0);
+  MOTOR_SetSpeed(RIGHT, 0); 
+  delay(100); 
+
+   switch (couleur)
   {
   case 0:
     uTurn();
-    avancer_distance(200);
+    avancer_distance(250);
+    tourner(-90);
+    avancer_distance(20);
+    tourner(90);
+    avancer_distance(50);
+    delay(20);
 
 
-    
+    SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
+    SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
     break;
   case 1:
     uTurn();
-    avancer_distance(200);
+    avancer_distance(350);
+    delay(20);
 
-
-    
+    SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
+    SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
     break;
   case 2:
     uTurn();
-    avancer_distance(200);
+    avancer_distance(250);
+    tourner(90);
+    avancer_distance(20);
+    tourner(-90);
+    avancer_distance(50);
+    delay(20);
 
-
-    
+    SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
+    SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
     break;   
   default:
     break;
@@ -250,7 +279,7 @@ void aller_bleu()
   avancer_distance(22);
   tourner(91);
   
-  avancer_distance(200); //jusqu'à la case bleue
+  avancer_distance(205); //jusqu'à la case bleue
   ouvrir_pince();//lâcher la balle
 
   retourner_debut(BLEU);
@@ -262,7 +291,7 @@ void aller_rouge()
   ouvrir_pince();
   avancer_distance(20);
   fermer_pince();
-  avancer_distance(215); //jusqu'à la case rouge
+  avancer_distance(220); //jusqu'à la case rouge
   ouvrir_pince();//lâcher balle
 
   retourner_debut(ROUGE);
@@ -272,14 +301,14 @@ void aller_jaune()
 {
   digitalWrite(PIN_LED_YELLOW, HIGH);//allumer DEL jaune
   ouvrir_pince();
-  avancer_distance(20);
+  avancer_distance(22);
   fermer_pince();
   tourner(90);
   
-  avancer_distance(15);
+  avancer_distance(20);
   tourner(-90);
   
-  avancer_distance(200); //jusqu'à la case jaune
+  avancer_distance(205); //jusqu'à la case jaune
   ouvrir_pince();//lâcher balle
 
   retourner_debut(JAUNE);
@@ -306,8 +335,8 @@ void ouvrir_pince(){
 SERVO_Enable(0);
 SERVO_Enable(1);
 delay(1000);
-SERVO_SetAngle(0, 90);
-SERVO_SetAngle(1, 90);
+SERVO_SetAngle(0, 75);
+SERVO_SetAngle(1, 105);
 delay(1000);
 SERVO_Disable(0);
 SERVO_Disable(1);
@@ -441,7 +470,7 @@ void avancer_distance(float distance)
   ENCODER_ReadReset(LEFT);
   ENCODER_ReadReset(RIGHT);
   MOTOR_SetSpeed(RIGHT, vitesseD); 
-  MOTOR_SetSpeed(LEFT, 0.3);
+  MOTOR_SetSpeed(LEFT, vitesseG);
   totalD=0;
   totalG=0;
   while(totalG < clics)
@@ -464,7 +493,7 @@ void avancer_timer(float distance)
   ENCODER_ReadReset(LEFT);
   ENCODER_ReadReset(RIGHT);
   MOTOR_SetSpeed(RIGHT, vitesseD); 
-  MOTOR_SetSpeed(LEFT, 0.5);
+  MOTOR_SetSpeed(LEFT, vitesseG);
   
   totalD=0;
   totalG=0;
@@ -578,7 +607,7 @@ void uTurn()
   MOTOR_SetSpeed(LEFT, -0.5);
   MOTOR_SetSpeed(RIGHT, 0.5);
 
-  while(ENCODER_Read(RIGHT)<3650){
+  while(ENCODER_Read(RIGHT)<3550){
     SOFT_TIMER_Update();
   }
   MOTOR_SetSpeed(LEFT,0);
@@ -887,15 +916,20 @@ void followLineCallback(void)
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
     case 7: // Rendu sur la feuille de couleur
+      
+      if(chercheCouleur)
+      {
+      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
       CompteurCallback = 1;
       speedL = 0;
       speedR = 0;
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR); 
-      delay(100);
-      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-      avancer_distance(20);
+      delay(300);
+      
+      avancer_distance(17);
       SOFT_TIMER_Enable(ID_COULEUR); 
+      }
 
     break;
     default: // erreur 
@@ -912,6 +946,9 @@ void followLineCallback(void)
 void GetBackOnLineCallback(void)
 {
   static int16_t CompteurCallback = 0;
+  static int16_t CompteurValue = 0;
+  
+  static int fin = 0;
   uint8_t ValeurSuiveur;
   static float speedL = SPEED_SUIVEUR;
   static float speedR = SPEED_SUIVEUR;
@@ -933,20 +970,33 @@ void GetBackOnLineCallback(void)
 //    {
 //     MOTOR_SetSpeed(LEFT, speedR);
 //      MOTOR_SetSpeed(RIGHT, speedR);
+      CompteurValue = 0;
       return;
 //    }
   }
-  do
+  CompteurValue++;
+  if (CompteurValue > 5)
   {
-    //tournerSelf(5,0.2);
+    do
+    {
+      //tournerSelf(5,0.2);
+      
+      tournerSuiveur(5);
+    }while (getFollowLineValue() != 2 );
+      //
+    //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
+    SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
+    if(fin == 0)
+    { 
+      fin++;
+      SOFT_TIMER_Enable(ID_INTERSECTION);
+    }
     
-    tournerSuiveur(5);
-  }while (getFollowLineValue() != 2 );
-  //
-  //SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GoToCollorCallback);
-  SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
-  SOFT_TIMER_Enable(ID_INTERSECTION);
-  //SOFT_TIMER_Disable(ID_QUILLE);
+    CompteurCallback = 0;
+    
+    
+    //SOFT_TIMER_Disable(ID_QUILLE);
+    }
 }
 
 void intersection(void)
@@ -956,8 +1006,11 @@ void intersection(void)
     SOFT_TIMER_Disable(ID_INTERSECTION);
     AX_BuzzerON(444, 1000);
     SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+    SPEED_SUIVEUR = 0.3;
     tourner(-90);
     SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+
+    chercheCouleur = 1;
 
   }
 
@@ -1087,7 +1140,9 @@ void renverser_quille()
   Serial.println(getSonarRange(0));
   //avancer(10);
   dis = getSonarRange(0);
+  Serial.println(dis);
   
+
   if(dis>30)
   {
     return;
@@ -1106,6 +1161,7 @@ void renverser_quille()
   //uTurn();
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &GetBackOnLineCallback);
   SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+  
 }
 
 
@@ -1137,11 +1193,44 @@ void readMicrophone( )
 
 void trouver_aller_couleur()
 {
+  chercheCouleur =0;
+
+  digitalWrite(PIN_LED_RED, LOW);
+  digitalWrite(PIN_LED_YELLOW, LOW);
+  digitalWrite(PIN_LED_BLUE, LOW);
   //avancer_distance(15);
   tcs.setIntegrationTime(TCS34725_INTEGRATIONTIME_614MS);
   delay(154); // Delay for one old integ. time period (to finish old reading)
   delay(615); // Delay for one new integ. time period (to allow new reading)
   tcs.getRawData(&r, &g, &b, &c);
+  
+
+
+ /* int random = (rand() % (3));
+
+  switch (random)
+  {
+  case 0:
+    aller_jaune();
+    break;
+  case 1:
+    aller_bleu();
+    break;
+  case 2:
+    aller_rouge();
+    break;    
+  
+  default:
+    break;
+  }
+
+  return;
+  */
+  
+
+
+
+
   if(g>b && b>r)
   {
     aller_bleu();
