@@ -301,7 +301,7 @@ void aller_jaune()
 {
   digitalWrite(PIN_LED_YELLOW, HIGH);//allumer DEL jaune
   ouvrir_pince();
-  avancer_distance(22);
+  avancer_distance(20);
   fermer_pince();
   tourner(90);
   
@@ -323,7 +323,7 @@ SERVO_Enable(0);
 SERVO_Enable(1);
 delay(1000);
 SERVO_SetAngle(0, 35);
-SERVO_SetAngle(1, 150);
+SERVO_SetAngle(1, 160);
 delay(1000);
 SERVO_Disable(0);
 SERVO_Disable(1);
@@ -1012,6 +1012,17 @@ void intersection(void)
 
     chercheCouleur = 1;
 
+    /*
+    for(int i = 0; i < 500; i++)
+    {
+      SOFT_TIMER_Update();
+      delay(2);
+    }
+    delay(500);
+    SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+    avancer_distance(52);
+    SOFT_TIMER_Enable(ID_COULEUR);
+    */
   }
 
 }
