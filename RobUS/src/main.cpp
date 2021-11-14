@@ -1,7 +1,7 @@
 #include <librobus.h>
 #include <Arduino.h>
 #include <math.h>
-#include <Tlv493d.h>
+#include "magsensor.hpp"
 #include <Adafruit_PWMServoDriver.h>
 #include <string.h>
 #include <SoftwareSerial.h>
@@ -82,8 +82,8 @@ uint8_t chercheCouleur = 0;
 extern float SPEED_SUIVEUR;
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_60X);
 
-// objet pour le Mag sensor
-Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
+// // objet pour le Mag sensor
+// Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
 // objet pour le driver de servo
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 float valeurSonar;
@@ -110,8 +110,8 @@ float getSonarRange(int idSensor);
 // fonctions infrarouges
 float getIrRange(int idSensor);
 // fonction senseur magnetique
-void MagSensor_GetData(float VectorArray[3]);
-void MagSensor_Init(void);
+// void MagSensor_GetData(float VectorArray[3]);
+// void MagSensor_Init(void);
 // fonction pour driver servo
 void SERVO_Init(Adafruit_PWMServoDriver *pwm);
 void SERVO_setServoPulse(Adafruit_PWMServoDriver *pwm, uint8_t n, double pulse);
@@ -618,38 +618,38 @@ void getSonarRange()
 //   MOTOR_SetSpeed(RIGHT,0);
 // } 
 
-/*------------------------------------------------- MagSensor_Init ---
-|  Function MagSensor_Init
-|
-|  Purpose:  Initialise le capteur magnetique
-|
-|  Parameters: nothing
-|  Constant :  nothing
-|  Dependency : Tlv493d.h
-|  Returns:    nothing
-*-------------------------------------------------------------------*/
-void MagSensor_Init(void)
-{
-  Tlv493dMagnetic3DSensor.begin();
-}
-/*------------------------------------------------- MagSensor_GetData ---
-|  Function MagSensor_Init
-|
-|  Purpose:  lis le capteur et retourne la valeur xyz du champ mag en miliTesla
-|
-|  Parameters: VectorArray pointer to an array of 3 float each one 
-|              repectively correspond to the X,Y and Z of the magnetic feild
-|  Constant :  nothing
-|  Dependency : Tlv493d.h
-|  Returns:    nothing
-*-------------------------------------------------------------------*/
-void MagSensor_GetData(float VectorArray[3])
-{
-  Tlv493dMagnetic3DSensor.updateData();
-  VectorArray[1] = Tlv493dMagnetic3DSensor.getX();
-  VectorArray[2] = Tlv493dMagnetic3DSensor.getY();
-  VectorArray[3] = Tlv493dMagnetic3DSensor.getZ();
-}
+// /*------------------------------------------------- MagSensor_Init ---
+// |  Function MagSensor_Init
+// |
+// |  Purpose:  Initialise le capteur magnetique
+// |
+// |  Parameters: nothing
+// |  Constant :  nothing
+// |  Dependency : Tlv493d.h
+// |  Returns:    nothing
+// *-------------------------------------------------------------------*/
+// void MagSensor_Init(void)
+// {
+//   Tlv493dMagnetic3DSensor.begin();
+// }
+// /*------------------------------------------------- MagSensor_GetData ---
+// |  Function MagSensor_Init
+// |
+// |  Purpose:  lis le capteur et retourne la valeur xyz du champ mag en miliTesla
+// |
+// |  Parameters: VectorArray pointer to an array of 3 float each one 
+// |              repectively correspond to the X,Y and Z of the magnetic feild
+// |  Constant :  nothing
+// |  Dependency : Tlv493d.h
+// |  Returns:    nothing
+// *-------------------------------------------------------------------*/
+// void MagSensor_GetData(float VectorArray[3])
+// {
+//   Tlv493dMagnetic3DSensor.updateData();
+//   VectorArray[1] = Tlv493dMagnetic3DSensor.getX();
+//   VectorArray[2] = Tlv493dMagnetic3DSensor.getY();
+//   VectorArray[3] = Tlv493dMagnetic3DSensor.getZ();
+// }
 /*------------------------------------------------- SERVO_Init ------
 |  Function SERVO_Init
 |
