@@ -7,6 +7,7 @@
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
+#include "mouvement.hpp"
 #define VERSIONID "Version je veux me tuer\n"
 /* 
 Avant de compiler ajouter les librairies:
@@ -23,10 +24,10 @@ Pour les ajouter dans votre projet sur PIO Home
 */
 
 
-#define CLIC_DEGREE 44     //44
-#define CLIC_CM 133.4                    
-#define KP 0.002   // teste avec le robot A OK
-#define KI 0.0000000000000
+//#define CLIC_DEGREE 44     //44
+//#define CLIC_CM 133.4                    
+//#define KP 0.002   // teste avec le robot A OK
+//#define KI 0.0000000000000
 //KP 0.00002 KI 0.00001 // pas ok
 //KP 0.00002 KI 0.0000001 // pas ok
 //KP 0.00002 KI 0.0000000 // 
@@ -87,21 +88,21 @@ float valeurSonar;
 
 
 // value of encoder needed for avancer() and pid()
-int32_t totalG, totalD;
-float vitesseD = 0.35;
-float vitesseG = 0.35;
+//int32_t totalG, totalD;
+//float vitesseD = 0.35;
+//float vitesseG = 0.35;
 // prototype de fonctions
 
 // mouvements
-void tourner(float angle);
-void tournerSuiveur(float angle);
-void tournerSelf(float angle,float speed);
+//void tourner(float angle);
+//void tournerSuiveur(float angle);
+//void tournerSelf(float angle,float speed);
 
-void avancer_distance (float distance);
-void avancer_timer (float distance);
-void uTurn();
-void pid();
-void pidReset();
+//void avancer_distance (float distance);
+//void avancer_timer (float distance);
+//void uTurn();
+//void pid();
+//void pidReset();
 //fonction Sonar
 float getSonarRange(int idSensor);
 // fonctions infrarouges
@@ -343,171 +344,171 @@ SERVO_Disable(0);
 SERVO_Disable(1);
 
 }
-/*------------------------------------------------- tourner ----------
-|  Function tourner
-|
-|  Purpose:  Make RobUS do a turn on himself with only one weel active
-|
-|  Parameters:
-|     type float 
-|          angle(IN) angle of witch the robot need to face after his turn
-|          give a negative value to turn left and a positive one to
-|          turn right.
-|
-|  Constant : 
-|     CLIC_DEGREE: Number of encoder pulse for 1 degrees of turn.
-|  Dependency : LibRobUS
-|  Returns:  nothing
-*-------------------------------------------------------------------*/
-void tourner(float angle)
-{
-  int32_t clic = CLIC_DEGREE * abs(angle);
-  ENCODER_Reset(RIGHT);
-  ENCODER_Reset(LEFT);
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
-  if(angle<0)
-  {
-  MOTOR_SetSpeed(RIGHT, 0.5);
+// /*------------------------------------------------- tourner ----------
+// |  Function tourner
+// |
+// |  Purpose:  Make RobUS do a turn on himself with only one weel active
+// |
+// |  Parameters:
+// |     type float 
+// |          angle(IN) angle of witch the robot need to face after his turn
+// |          give a negative value to turn left and a positive one to
+// |          turn right.
+// |
+// |  Constant : 
+// |     CLIC_DEGREE: Number of encoder pulse for 1 degrees of turn.
+// |  Dependency : LibRobUS
+// |  Returns:  nothing
+// *-------------------------------------------------------------------*/
+// void tourner(float angle)
+// {
+//   int32_t clic = CLIC_DEGREE * abs(angle);
+//   ENCODER_Reset(RIGHT);
+//   ENCODER_Reset(LEFT);
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
+//   if(angle<0)
+//   {
+//   MOTOR_SetSpeed(RIGHT, 0.5);
 
-  while(ENCODER_Read(RIGHT)<clic)
-  {}
-  }
-  else{
-  MOTOR_SetSpeed(LEFT, 0.5);
+//   while(ENCODER_Read(RIGHT)<clic)
+//   {}
+//   }
+//   else{
+//   MOTOR_SetSpeed(LEFT, 0.5);
 
-  while(ENCODER_Read(LEFT)<clic)
-  {}
-  }
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
-}
+//   while(ENCODER_Read(LEFT)<clic)
+//   {}
+//   }
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
+// }
 
-/*------------------------------------------------- tourner ----------
-|  Function tourner
-|
-|  Purpose:  Make RobUS do a turn on himself with only one weel active
-|
-|  Parameters:
-|     type float 
-|          angle(IN) angle of witch the robot need to face after his turn
-|          give a negative value to turn left and a positive one to
-|          turn right.
-|
-|  Constant : 
-|     CLIC_DEGREE: Number of encoder pulse for 1 degrees of turn.
-|  Dependency : LibRobUS
-|  Returns:  nothing
-*-------------------------------------------------------------------*/
-void tournerSuiveur(float angle)
-{
-  int32_t clic = CLIC_DEGREE * abs(angle);
-  ENCODER_Reset(RIGHT);
-  ENCODER_Reset(LEFT);
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
-  if(angle<0)
-  {
-  MOTOR_SetSpeed(RIGHT, 0.2);
+// /*------------------------------------------------- tourner ----------
+// |  Function tourner
+// |
+// |  Purpose:  Make RobUS do a turn on himself with only one weel active
+// |
+// |  Parameters:
+// |     type float 
+// |          angle(IN) angle of witch the robot need to face after his turn
+// |          give a negative value to turn left and a positive one to
+// |          turn right.
+// |
+// |  Constant : 
+// |     CLIC_DEGREE: Number of encoder pulse for 1 degrees of turn.
+// |  Dependency : LibRobUS
+// |  Returns:  nothing
+// *-------------------------------------------------------------------*/
+// void tournerSuiveur(float angle)
+// {
+//   int32_t clic = CLIC_DEGREE * abs(angle);
+//   ENCODER_Reset(RIGHT);
+//   ENCODER_Reset(LEFT);
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
+//   if(angle<0)
+//   {
+//   MOTOR_SetSpeed(RIGHT, 0.2);
 
-  while(ENCODER_Read(RIGHT)<clic)
-  {}
-  }
-  else{
-  MOTOR_SetSpeed(LEFT, 0.2);
+//   while(ENCODER_Read(RIGHT)<clic)
+//   {}
+//   }
+//   else{
+//   MOTOR_SetSpeed(LEFT, 0.2);
 
-  while(ENCODER_Read(LEFT)<clic)
-  {}
-  }
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
-}
+//   while(ENCODER_Read(LEFT)<clic)
+//   {}
+//   }
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
+// }
 
-void tournerSelf(float angle,float speed)
-{
-  int32_t clic = CLIC_DEGREE * abs(angle);
-  ENCODER_Reset(RIGHT);
-  ENCODER_Reset(LEFT);
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
-  if(angle<0)
-  {
-  MOTOR_SetSpeed(RIGHT, speed);
-  MOTOR_SetSpeed(LEFT, -(speed));
-  while(ENCODER_Read(RIGHT)<clic)
-  {}
-  }
-  else{
-  MOTOR_SetSpeed(RIGHT, -(speed));
-  MOTOR_SetSpeed(LEFT, speed);
+// void tournerSelf(float angle,float speed)
+// {
+//   int32_t clic = CLIC_DEGREE * abs(angle);
+//   ENCODER_Reset(RIGHT);
+//   ENCODER_Reset(LEFT);
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
+//   if(angle<0)
+//   {
+//   MOTOR_SetSpeed(RIGHT, speed);
+//   MOTOR_SetSpeed(LEFT, -(speed));
+//   while(ENCODER_Read(RIGHT)<clic)
+//   {}
+//   }
+//   else{
+//   MOTOR_SetSpeed(RIGHT, -(speed));
+//   MOTOR_SetSpeed(LEFT, speed);
 
-  while(ENCODER_Read(LEFT)<clic)
-  {}
-  }
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
-}
+//   while(ENCODER_Read(LEFT)<clic)
+//   {}
+//   }
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
+// }
 
-/*------------------------------------------------- avancer_distance ----------
-|  Function avancer_distance
-|
-|  Purpose:  Make RobUS move forward to a fixed distance
-|
-|  Parameters:
-|     type float 
-|          distance(IN) distance in centimeter (cm) with the robot need
-|          to move.
-|
-|  Constant :
-|     CLIC_CM: number of pulse of the encoder for one cm forward
-|  Dependency : LibRobUS
-|  Returns:  nothing
-*-------------------------------------------------------------------*/
-void avancer_distance(float distance)
-{
+// /*------------------------------------------------- avancer_distance ----------
+// |  Function avancer_distance
+// |
+// |  Purpose:  Make RobUS move forward to a fixed distance
+// |
+// |  Parameters:
+// |     type float 
+// |          distance(IN) distance in centimeter (cm) with the robot need
+// |          to move.
+// |
+// |  Constant :
+// |     CLIC_CM: number of pulse of the encoder for one cm forward
+// |  Dependency : LibRobUS
+// |  Returns:  nothing
+// *-------------------------------------------------------------------*/
+// void avancer_distance(float distance)
+// {
 
-  int32_t clics = distance * CLIC_CM;
-  delay(100);
-  ENCODER_ReadReset(LEFT);
-  ENCODER_ReadReset(RIGHT);
-  MOTOR_SetSpeed(RIGHT, vitesseD); 
-  MOTOR_SetSpeed(LEFT, vitesseG);
-  totalD=0;
-  totalG=0;
-  while(totalG < clics)
-  {
-  delay(100);
-  pid();
+//   int32_t clics = distance * CLIC_CM;
+//   delay(100);
+//   ENCODER_ReadReset(LEFT);
+//   ENCODER_ReadReset(RIGHT);
+//   MOTOR_SetSpeed(RIGHT, vitesseD); 
+//   MOTOR_SetSpeed(LEFT, vitesseG);
+//   totalD=0;
+//   totalG=0;
+//   while(totalG < clics)
+//   {
+//   delay(100);
+//   pid();
   
 
-  }
-  pidReset();
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
+//   }
+//   pidReset();
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
  
-}
+// }
 
-void avancer_timer(float distance)
-{
+// void avancer_timer(float distance)
+// {
 
-  int32_t clics = distance * CLIC_CM;
-  ENCODER_ReadReset(LEFT);
-  ENCODER_ReadReset(RIGHT);
-  MOTOR_SetSpeed(RIGHT, vitesseD); 
-  MOTOR_SetSpeed(LEFT, vitesseG);
+//   int32_t clics = distance * CLIC_CM;
+//   ENCODER_ReadReset(LEFT);
+//   ENCODER_ReadReset(RIGHT);
+//   MOTOR_SetSpeed(RIGHT, vitesseD); 
+//   MOTOR_SetSpeed(LEFT, vitesseG);
   
-  totalD=0;
-  totalG=0;
-  SOFT_TIMER_Enable(ID_PID);
-  while(totalG < clics)
-  {
-    SOFT_TIMER_Update();
-  }
-  MOTOR_SetSpeed(LEFT, 0);
-  MOTOR_SetSpeed(RIGHT, 0);
-  SOFT_TIMER_Disable(ID_PID);
-  pidReset();
-}
+//   totalD=0;
+//   totalG=0;
+//   SOFT_TIMER_Enable(ID_PID);
+//   while(totalG < clics)
+//   {
+//     SOFT_TIMER_Update();
+//   }
+//   MOTOR_SetSpeed(LEFT, 0);
+//   MOTOR_SetSpeed(RIGHT, 0);
+//   SOFT_TIMER_Disable(ID_PID);
+//   pidReset();
+// }
 
 void getSonarRange()
 {
@@ -522,98 +523,99 @@ void getSonarRange()
 //void testArretForce(){
 
 //}
-/*------------------------------------------------- pid ---------------
-|  Function pid
-|
-|  Purpose:  feedback loop for the motor speed
-|
-|  Parameters: nothing
-|  Constant :
-|       KP : Multiplicative constant of the proportional factor need to 
-|            be set by the user.
-|       KI : Multiplicative constant of the Integral factor need to 
-|            be set by the user.
-|  Variables :
-| 
-|  Dependency : LibRobUS
-|       
-|  Returns:    nothing
-*-------------------------------------------------------------------*/
-void pid()
-{
-  static int32_t erreurP, erreurI , pulseG, pulseD;
-  float Correction;
+// /*------------------------------------------------- pid ---------------
+// |  Function pid
+// |
+// |  Purpose:  feedback loop for the motor speed
+// |
+// |  Parameters: nothing
+// |  Constant :
+// |       KP : Multiplicative constant of the proportional factor need to 
+// |            be set by the user.
+// |       KI : Multiplicative constant of the Integral factor need to 
+// |            be set by the user.
+// |  Variables :
+// | 
+// |  Dependency : LibRobUS
+// |       
+// |  Returns:    nothing
+// *-------------------------------------------------------------------*/
+// void pid()
+// {
+//   static int32_t erreurP, erreurI , pulseG, pulseD;
+//   float Correction;
 
-  pulseD = ENCODER_ReadReset(RIGHT);
-  //Serial.print(pulseD, DEC);
-  //Serial.print("\n\r");
-  pulseG = ENCODER_ReadReset(LEFT);
-  //Serial.print(pulseG, DEC);
-  //Serial.print("\n\r");
+//   pulseD = ENCODER_ReadReset(RIGHT);
+//   //Serial.print(pulseD, DEC);
+//   //Serial.print("\n\r");
+//   pulseG = ENCODER_ReadReset(LEFT);
+//   //Serial.print(pulseG, DEC);
+//   //Serial.print("\n\r");
 
 
-  totalG = totalG + pulseG; 
-  //Serial.print(totalG, DEC);
-  //Serial.print("\n\r");
-  totalD = totalD + pulseD;
-  //Serial.print(totalD, DEC);
-  //Serial.print("\n\r");
-  erreurP = pulseG - pulseD;
-  //Serial.print(erreurP, DEC);
-  //Serial.print("\n\r");
-  //erreurI = erreurP * 100;
-  //erreurI = totalG - totalD;
-  Correction = (erreurP*KP) + (erreurI*KI);
-  //Serial.print(Correction, DEC);
-  //Serial.print("\n\r");
-  vitesseD = vitesseD + Correction;
-  MOTOR_SetSpeed(RIGHT,vitesseD);
-  //ENCODER_Reset(LEFT);
-  //ENCODER_Reset(RIGHT);
+//   totalG = totalG + pulseG; 
+//   //Serial.print(totalG, DEC);
+//   //Serial.print("\n\r");
+//   totalD = totalD + pulseD;
+//   //Serial.print(totalD, DEC);
+//   //Serial.print("\n\r");
+//   erreurP = pulseG - pulseD;
+//   //Serial.print(erreurP, DEC);
+//   //Serial.print("\n\r");
+//   //erreurI = erreurP * 100;
+//   //erreurI = totalG - totalD;
+//   Correction = (erreurP*KP) + (erreurI*KI);
+//   //Serial.print(Correction, DEC);
+//   //Serial.print("\n\r");
+//   vitesseD = vitesseD + Correction;
+//   MOTOR_SetSpeed(RIGHT,vitesseD);
+//   //ENCODER_Reset(LEFT);
+//   //ENCODER_Reset(RIGHT);
 
-}
-/*------------------------------------------------- pidReset ---------------
-|  Function pid
-|
-|  Purpose:  reset pid values
-|
-|  Parameters: nothing
-|  Constant : nothing
-|  Variables :
-| 
-|  Dependency : LibRobUS
-|       
-|  Returns:    nothing
-*-------------------------------------------------------------------*/
-void pidReset()
-{
-  totalG = 0;
-  totalD = 0;
-  vitesseD = 0.30;
-}
-/*------------------------------------------------- uTurn ---------------
-|  Function uTurn
-|
-|  Purpose:  make robUS do a full 180 degree.
-|
-|  Parameters: nothing
-|  Constant :  nothing
-|  Dependency : LibRobUS
-|  Returns:    nothing
-*-------------------------------------------------------------------*/
-void uTurn()
-{
-  ENCODER_Reset(LEFT);
-  ENCODER_Reset(RIGHT);
-  MOTOR_SetSpeed(LEFT, -0.5);
-  MOTOR_SetSpeed(RIGHT, 0.5);
+// }
+// /*------------------------------------------------- pidReset ---------------
+// |  Function pid
+// |
+// |  Purpose:  reset pid values
+// |
+// |  Parameters: nothing
+// |  Constant : nothing
+// |  Variables :
+// | 
+// |  Dependency : LibRobUS
+// |       
+// |  Returns:    nothing
+// *-------------------------------------------------------------------*/
+// void pidReset()
+// {
+//   totalG = 0;
+//   totalD = 0;
+//   vitesseD = 0.30;
+// }
+// /*------------------------------------------------- uTurn ---------------
+// |  Function uTurn
+// |
+// |  Purpose:  make robUS do a full 180 degree.
+// |
+// |  Parameters: nothing
+// |  Constant :  nothing
+// |  Dependency : LibRobUS
+// |  Returns:    nothing
+// *-------------------------------------------------------------------*/
+// void uTurn()
+// {
+//   ENCODER_Reset(LEFT);
+//   ENCODER_Reset(RIGHT);
+//   MOTOR_SetSpeed(LEFT, -0.5);
+//   MOTOR_SetSpeed(RIGHT, 0.5);
 
-  while(ENCODER_Read(RIGHT)<3550){
-    SOFT_TIMER_Update();
-  }
-  MOTOR_SetSpeed(LEFT,0);
-  MOTOR_SetSpeed(RIGHT,0);
-}
+//   while(ENCODER_Read(RIGHT)<3550){
+//     SOFT_TIMER_Update();
+//   }
+//   MOTOR_SetSpeed(LEFT,0);
+//   MOTOR_SetSpeed(RIGHT,0);
+// } 
+
 /*------------------------------------------------- MagSensor_Init ---
 |  Function MagSensor_Init
 |
