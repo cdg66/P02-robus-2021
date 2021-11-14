@@ -514,14 +514,14 @@ SERVO_Disable(1);
 //   pidReset();
 // }
 
-void getSonarRange()
-{
-  valeurSonar = SONAR_GetRange(1);
+// void getSonarRange()
+// {
+//   valeurSonar = SONAR_GetRange(1);
 
-  Serial.println(valeurSonar);
+//   Serial.println(valeurSonar);
   
-  //delay(100);
-}
+//   //delay(100);
+// }
 
 
 //void testArretForce(){
