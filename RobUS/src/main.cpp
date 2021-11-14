@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <math.h>
 #include "magsensor.hpp"
-#include <Adafruit_PWMServoDriver.h>
+// #include <Adafruit_PWMServoDriver.h>
 #include <string.h>
 #include <SoftwareSerial.h>
 #include <Wire.h>
@@ -11,6 +11,7 @@
 #include "SoftTimer.hpp"
 #include "followline.hpp"
 #include "distance.hpp"
+#include "servo.hpp"
 #define VERSIONID "Version je veux me tuer\n"
 /* 
 Avant de compiler ajouter les librairies:
@@ -38,23 +39,23 @@ Pour les ajouter dans votre projet sur PIO Home
 //KP 0.000233 KI 0.0000000 // pas ok
 //KP 0.0002303 KI 0.0000000 // pas ok
 //KP 0.000230201 KI 0.0000000000001 // pas ok
-// define pour les servo
-#define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  600 // This is the 'maximum' pulse length count (out of 4096)
-#define USMIN  600 // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
-#define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
-#define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
-// define pour les callbacks
-#define ID_PID 1
-#define ID_SUIVEURDELIGNE 2
-#define ID_QUILLE 3
-#define ID_MICRO 4
-#define ID_COULEUR 5
-#define ID_INTERSECTION 6
-#define ID_7 7
-#define ID_8 8
-#define ID_9 9
-#define ID_10 10
+// // define pour les servo
+// #define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
+// #define SERVOMAX  600 // This is the 'maximum' pulse length count (out of 4096)
+// #define USMIN  600 // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
+// #define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
+// #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
+// // define pour les callbacks
+// #define ID_PID 1
+// #define ID_SUIVEURDELIGNE 2
+// #define ID_QUILLE 3
+// #define ID_MICRO 4
+// #define ID_COULEUR 5
+// #define ID_INTERSECTION 6
+// #define ID_7 7
+// #define ID_8 8
+// #define ID_9 9
+// #define ID_10 10
 // define pour les pins du arduino
 #define PIN_FOLLOW_RED 37
 #define PIN_FOLLOW_YELLOW 38
@@ -86,7 +87,7 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS347
 // // objet pour le Mag sensor
 // Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
 // objet pour le driver de servo
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+// Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 float valeurSonar;
 
 
@@ -114,9 +115,9 @@ float valeurSonar;
 // void MagSensor_GetData(float VectorArray[3]);
 // void MagSensor_Init(void);
 // fonction pour driver servo
-void SERVO_Init(Adafruit_PWMServoDriver *pwm);
-void SERVO_setServoPulse(Adafruit_PWMServoDriver *pwm, uint8_t n, double pulse);
-void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulselen);
+// void SERVO_Init(Adafruit_PWMServoDriver *pwm);
+// void SERVO_setServoPulse(Adafruit_PWMServoDriver *pwm, uint8_t n, double pulse);
+// void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulselen);
 void aller_bleu();
 void aller_jaune();
 void aller_rouge();
@@ -165,7 +166,7 @@ void setup() {
 
   
   MagSensor_Init();
-  SERVO_Init(&pwm);
+  SERVO_Init();
   followLineInit();
   // init pid
   SOFT_TIMER_SetCallback(ID_PID, &pid);
@@ -651,82 +652,82 @@ void getSonarRange()
 //   VectorArray[2] = Tlv493dMagnetic3DSensor.getY();
 //   VectorArray[3] = Tlv493dMagnetic3DSensor.getZ();
 // }
-/*------------------------------------------------- SERVO_Init ------
-|  Function SERVO_Init
-|
-|  Purpose:  Initialise le PCA9685 servo driver
-|
-|  Parameters: objet pwm s'utilise SERVO_Init(&pwm);
-|  Constant :  nothing
-|  Dependency : Adafruit_PWMServoDriver.h
-|  Returns:    nothing
-*-------------------------------------------------------------------*/
-void SERVO_Init(Adafruit_PWMServoDriver *pwm)
-{
-  pwm->begin();
-  /*
-   * In theory the internal oscillator (clock) is 25MHz but it really isn't
-   * that precise. You can 'calibrate' this by tweaking this number until
-   * you get the PWM update frequency you're expecting!
-   * The int.osc. for the PCA9685 chip is a range between about 23-27MHz and
-   * is used for calculating things like writeMicroseconds()
-   * Analog servos run at ~50 Hz updates, It is importaint to use an
-   * oscilloscope in setting the int.osc frequency for the I2C PCA9685 chip.
-   * 1) Attach the oscilloscope to one of the PWM signal pins and ground on
-   *    the I2C PCA9685 chip you are setting the value for.
-   * 2) Adjust setOscillatorFrequency() until the PWM update frequency is the
-   *    expected value (50Hz for most ESCs)
-   * Setting the value here is specific to each individual I2C PCA9685 chip and
-   * affects the calculations for the PWM update frequency. 
-   * Failure to correctly set the int.osc value will cause unexpected PWM results
-   */
-  pwm->begin();
-  pwm->setOscillatorFrequency(26300000);
-  pwm->setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
+// /*------------------------------------------------- SERVO_Init ------
+// |  Function SERVO_Init
+// |
+// |  Purpose:  Initialise le PCA9685 servo driver
+// |
+// |  Parameters: objet pwm s'utilise SERVO_Init(&pwm);
+// |  Constant :  nothing
+// |  Dependency : Adafruit_PWMServoDriver.h
+// |  Returns:    nothing
+// *-------------------------------------------------------------------*/
+// void SERVO_Init(Adafruit_PWMServoDriver *pwm)
+// {
+//   pwm->begin();
+//   /*
+//    * In theory the internal oscillator (clock) is 25MHz but it really isn't
+//    * that precise. You can 'calibrate' this by tweaking this number until
+//    * you get the PWM update frequency you're expecting!
+//    * The int.osc. for the PCA9685 chip is a range between about 23-27MHz and
+//    * is used for calculating things like writeMicroseconds()
+//    * Analog servos run at ~50 Hz updates, It is importaint to use an
+//    * oscilloscope in setting the int.osc frequency for the I2C PCA9685 chip.
+//    * 1) Attach the oscilloscope to one of the PWM signal pins and ground on
+//    *    the I2C PCA9685 chip you are setting the value for.
+//    * 2) Adjust setOscillatorFrequency() until the PWM update frequency is the
+//    *    expected value (50Hz for most ESCs)
+//    * Setting the value here is specific to each individual I2C PCA9685 chip and
+//    * affects the calculations for the PWM update frequency. 
+//    * Failure to correctly set the int.osc value will cause unexpected PWM results
+//    */
+//   pwm->begin();
+//   pwm->setOscillatorFrequency(26300000);
+//   pwm->setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 
-}
-// Utilise a tes propre risque non teste, fait partit des example de la librairie
-// You can use this function if you'd like to set the pulse length in seconds
-// e.g. setServoPulse(0, 0.001) is a ~1 millisecond pulse width. It's not precise!
-void SERVO_setServoPulse(Adafruit_PWMServoDriver *pwm, uint8_t n, double pulse) 
-{
-  double pulselength;
+// }
+// // Utilise a tes propre risque non teste, fait partit des example de la librairie
+// // You can use this function if you'd like to set the pulse length in seconds
+// // e.g. setServoPulse(0, 0.001) is a ~1 millisecond pulse width. It's not precise!
+// void SERVO_setServoPulse(Adafruit_PWMServoDriver *pwm, uint8_t n, double pulse) 
+// {
+//   double pulselength;
   
-  pulselength = 1000000;   // 1,000,000 us per second
-  pulselength /= SERVO_FREQ;   // Analog servos run at ~60 Hz updates
-  Serial.print(pulselength); Serial.println(" us per period"); 
-  pulselength /= 4096;  // 12 bits of resolution
-  Serial.print(pulselength); Serial.println(" us per bit"); 
-  pulse *= 1000000;  // convert input seconds to us
-  pulse /= pulselength;
-  Serial.println(pulse);
-  pwm->setPWM(n, 0, pulse);
-}
-/*------------------------------------------------- SERVO_Init ------
-|  Function SERVO_Init
-|
-|  Purpose:  set le PWM pour un channel (0 a 15) le pulse pour faire 
-|            bouger le servo
-|
-|  Parameters: objet pwm (&pwm);
-|              ServoID le channel sur lequel le pwm va s'appliquer (0 a 15) plus haut que ca la fonction ne fera rien
-|              pulselen set avec SERVOMIN et SERVOMAX et entre les deux
-|  Constant :  nothing
-|  Dependency : Adafruit_PWMServoDriver.h
-|  Returns:    nothing
-*-------------------------------------------------------------------*/
-void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulselen) // pulselen < 4096
-{
-  if (ServoID > 15) 
-  {
-    return;
-  }
-  if (pulselen > 4096)
-  {
-    pulselen = 4096;
-  }
-  pwm->setPWM(ServoID,pulselen , 0);
-}
+//   pulselength = 1000000;   // 1,000,000 us per second
+//   pulselength /= SERVO_FREQ;   // Analog servos run at ~60 Hz updates
+//   Serial.print(pulselength); Serial.println(" us per period"); 
+//   pulselength /= 4096;  // 12 bits of resolution
+//   Serial.print(pulselength); Serial.println(" us per bit"); 
+//   pulse *= 1000000;  // convert input seconds to us
+//   pulse /= pulselength;
+//   Serial.println(pulse);
+//   pwm->setPWM(n, 0, pulse);
+// }
+// /*------------------------------------------------- SERVO_Init ------
+// |  Function SERVO_Init
+// |
+// |  Purpose:  set le PWM pour un channel (0 a 15) le pulse pour faire 
+// |            bouger le servo
+// |
+// |  Parameters: objet pwm (&pwm);
+// |              ServoID le channel sur lequel le pwm va s'appliquer (0 a 15) plus haut que ca la fonction ne fera rien
+// |              pulselen set avec SERVOMIN et SERVOMAX et entre les deux
+// |  Constant :  nothing
+// |  Dependency : Adafruit_PWMServoDriver.h
+// |  Returns:    nothing
+// *-------------------------------------------------------------------*/
+// void SERVO_SetPWM(Adafruit_PWMServoDriver *pwm, uint8_t ServoID, uint16_t pulselen) // pulselen < 4096
+// {
+//   if (ServoID > 15) 
+//   {
+//     return;
+//   }
+//   if (pulselen > 4096)
+//   {
+//     pulselen = 4096;
+//   }
+//   pwm->setPWM(ServoID,pulselen , 0);
+// }
 // /*------------------------------------------------- getSonarRange ---
 // |  Function getSonarRange
 // |
