@@ -1,0 +1,35 @@
+{
+  "C_Cpp_Runner.cCompilerPath": "C:/Users/Gring/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+  "C_Cpp_Runner.cppCompilerPath": "C:\\MinGW\\bin\\g++.exe",
+  "C_Cpp_Runner.debuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+  "C_Cpp_Runner.makePath": "C:\\MinGW\\bin\\make.exe",
+  "C_Cpp_Runner.warnings": [],
+  "C_Cpp_Runner.compilerArgs": [
+    "-mmcu=atmega2560",
+    ""
+  ],
+  "C_Cpp_Runner.includePaths": [
+    "C:/Users/Gring/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/include",
+    "C:/Users/Gring/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/src",
+    "C:/Users/Gring/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/lib/LibRobUS-master/src",
+    "C:/Users/Gring/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+    "C:/Users/Gring/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit TCS34725",
+    "C:/Users/Gring/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit BusIO",
+    "C:/Users/Gring/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+    "C:/Users/Gring/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/TLV493D-Magnetic-Sensor/src",
+    "C:/Users/Gring/OneDrive/Documents/GitHub/P02-robus-2021/RobUS/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library",
+    "C:/Users/Gring/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+    "C:/Users/Gring/.platformio/packages/framework-arduino-avr/cores/arduino",
+    "C:/Users/Gring/.platformio/packages/framework-arduino-avr/variants/mega",
+    "C:/Users/Gring/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+    "C:/Users/Gring/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+    ""
+  ],
+  "C_Cpp_Runner.linkerArgs": [],
+  "C_Cpp_Runner.cStandard": "c11",
+  "C_Cpp_Runner.cppStandard": "c++11",
+  "C_Cpp_Runner.excludeSearch": [],
+  "C_Cpp_Runner.enableWarnings": true,
+  "C_Cpp_Runner.warningsAsError": false,
+  "C_Cpp.errorSquiggles": "Disabled"
+}
