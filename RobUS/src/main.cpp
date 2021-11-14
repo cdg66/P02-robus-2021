@@ -69,6 +69,7 @@ Pour les ajouter dans votre projet sur PIO Home
 
 
 
+
 #define micSon  A4 // entre analogique du 5khz
 #define micAmb  A5 // entree analogique du son ambiant
 

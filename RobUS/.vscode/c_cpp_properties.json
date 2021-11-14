@@ -55,6 +55,7 @@
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
+
             "compilerPath": "C:/Users/etien/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
             "compilerArgs": [
                 "-mmcu=atmega2560",
