@@ -39,7 +39,7 @@ void SERVO_Init(void)
 // Utilise a tes propre risque non teste, fait partit des example de la librairie
 // You can use this function if you'd like to set the pulse length in seconds
 // e.g. setServoPulse(0, 0.001) is a ~1 millisecond pulse width. It's not precise!
-void SERVO_setServoPulse(uint8_t n, double pulse) 
+void SERVO_setServoPulse(uint8_t ServoID, double pulse) 
 {
   double pulselength;
   
@@ -51,7 +51,7 @@ void SERVO_setServoPulse(uint8_t n, double pulse)
   pulse *= 1000000;  // convert input seconds to us
   pulse /= pulselength;
   Serial.println(pulse);
-  pwm.setPWM(n, 0, pulse);
+  pwm.setPWM(ServoID, 0, pulse);
 }
 /*------------------------------------------------- SERVO_SetPWM ------
 |  Function SERVO_SetPWM 

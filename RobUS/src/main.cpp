@@ -90,7 +90,6 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS347
 // Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 float valeurSonar;
 
-
 // value of encoder needed for avancer() and pid()
 //int32_t totalG, totalD;
 //float vitesseD = 0.35;
@@ -145,7 +144,7 @@ void setup() {
   Serial.write(VERSIONID);
   
   fermer_pince();
-  
+  Serial.available();
   //SoftwareSerial BTSerial(16,17);
   //Serial2.begin(115200);
   //BTSerial.begin(115200);
@@ -206,7 +205,7 @@ void setup() {
   pinMode(PIN_LED_GREEN,OUTPUT);
   //tourner(-90);
   //avancer_distance(320);
-  
+  MagSensor_Init();
 }
 
 

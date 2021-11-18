@@ -12,6 +12,6 @@
 
 // public function
 void SERVO_Init(void);
-void SERVO_setServoPulse(uint8_t n, double pulse);
+void SERVO_setServoPulse(uint8_t ServoID, double pulse);
 void SERVO_SetPWM(uint8_t ServoID, uint16_t pulselen);
 #endif

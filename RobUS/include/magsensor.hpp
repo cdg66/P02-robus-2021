@@ -7,6 +7,6 @@
 
 // public function
 void MagSensor_Init(void);
-void MagSensor_GetData(float VectorArray[3]);
+void MagSensor_GetData(float VectorArray[3], float *Norm);
 
 #endif
