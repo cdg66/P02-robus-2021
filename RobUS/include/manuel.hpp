@@ -13,6 +13,9 @@ void lireBluetooth();
 void mineStatus(bool status);
 
 
+void manuel_init();
+void manuelStart();
+void manuelStop();
 
 //fonctions qui devront être changer pour appeler les bonnes fonctions dans le main
 void modeAuto();

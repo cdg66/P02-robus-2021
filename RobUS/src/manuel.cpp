@@ -1,5 +1,6 @@
 #include "manuel.hpp"
 #include "LibRobus.h"
+#include "SoftTimer.hpp"
 
 String msg;
 float speedG, speedD;
@@ -11,7 +12,26 @@ char character;
 void processBluetooth(String msg);
 void sendMessage(String message);
 
+//Fonction pour initialiser le bluetooth
+void manuel_init()
+{
+  Serial3.begin(115200);
+  msg = "";
 
+   SOFT_TIMER_SetCallback(ID_MANUEL, &lireBluetooth);
+  SOFT_TIMER_SetDelay(ID_MANUEL, 20);
+  SOFT_TIMER_SetRepetition(ID_MANUEL, -1);
+}
+
+void manuelStart()
+{
+  SOFT_TIMER_Enable(ID_MANUEL);
+}
+
+void manuelStop()
+{
+  SOFT_TIMER_Disable(ID_MANUEL);
+}
 
 //Fonction qui envoie le bon message à l'application
 //pour update le status.
