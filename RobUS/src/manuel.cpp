@@ -91,9 +91,23 @@ void processBluetooth(String msg)
   MOTOR_SetSpeed(LEFT, speedG);
   MOTOR_SetSpeed(RIGHT, speedD);
   
-  if(drapeau > 0){
+  if(drapeau >= 0){
     dropDrapeau(drapeau);
-    AX_BuzzerON(444, 500);
+
+
+    AX_BuzzerON(1976, 67.5);
+    delay(75);
+
+    AX_BuzzerOFF();
+
+    AX_BuzzerON(2637, 472.5);
+    delay(525);
+    AX_BuzzerOFF();
+
+    
+
+
+    //AX_BuzzerON(444, 500);
   }
   
 }

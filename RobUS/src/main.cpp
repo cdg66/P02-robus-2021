@@ -148,6 +148,7 @@ void setup() {
   Serial.write(VERSIONID);
 
   manuel_init();
+  manuelStart();
   
   fermer_pince();
   Serial.available();
