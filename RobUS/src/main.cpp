@@ -13,6 +13,7 @@
 #include "distance.hpp"
 #include "servo.hpp"
 #include "minedetection.hpp"
+#include "manuel.hpp"
 #define VERSIONID "Version je veux me tuer\n"
 /* 
 Avant de compiler ajouter les librairies:
@@ -145,6 +146,8 @@ void retourner_debut(int couleur);
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
+
+  manuel_init();
   
   fermer_pince();
   Serial.available();
@@ -207,6 +210,10 @@ void setup() {
   SOFT_TIMER_SetDelay(ID_INTERSECTION, 10);
   SOFT_TIMER_SetRepetition(ID_INTERSECTION, -1);
   //SOFT_TIMER_Enable(ID_INTERSECTION);
+
+
+
+  
  
 
   pinMode(PIN_LED_RED,OUTPUT);
