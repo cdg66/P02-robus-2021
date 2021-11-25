@@ -10,7 +10,7 @@
 struct _mine
 {
     uint8_t processStatus = 0;
-    uint8_t mineDetected  = 0;
+    bool mineDetected  = 0;
 };
 // public function
 void mineDetection_Init(void);

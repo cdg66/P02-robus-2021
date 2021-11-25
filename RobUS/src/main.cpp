@@ -1,7 +1,7 @@
 #include <librobus.h>
 #include <Arduino.h>
 #include <math.h>
-//#include "magsensor.hpp"
+#include "magsensor.hpp"
 // #include <Adafruit_PWMServoDriver.h>
 #include <string.h>
 #include <SoftwareSerial.h>
@@ -167,7 +167,7 @@ void setup() {
   } */
 
   
-  //MagSensor_Init();
+  MagSensor_Init();
   SERVO_Init();
   followLineInit();
   mineDetection_Init();
@@ -213,6 +213,9 @@ void setup() {
   pinMode(PIN_LED_YELLOW,OUTPUT);
   pinMode(PIN_LED_BLUE,OUTPUT);
   pinMode(PIN_LED_GREEN,OUTPUT);
+
+  // pour test 
+  pinMode(13,OUTPUT);
   //tourner(-90);
   //avancer_distance(320);
   //MagSensor_Init();
@@ -224,11 +227,11 @@ void loop()
   SOFT_TIMER_Update();
   if (mine.mineDetected >= 1)
   {
-    digitalWrite(PIN_LED_BLUE,HIGH);
+    digitalWrite(13,HIGH);
   }
   else
   {
-    digitalWrite(PIN_LED_BLUE,LOW);
+    digitalWrite(13,LOW);
   }
   //float dist = getSonarRange(0);
   //Serial.println(dist);

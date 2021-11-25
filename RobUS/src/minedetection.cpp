@@ -2,6 +2,7 @@
 #include "LibRobus.h"
 #include "SoftTimer.hpp"
 #include "magsensor.hpp"
+#include "manuel.hpp"
 //public var
 struct _mine mine;
 
@@ -19,7 +20,13 @@ void mineDetection_Callback(void)
     mine.processStatus = 1;
     // lit un sample
     MagSensor_GetData(VectorArray,&NormBuffer[OldestSampleIndex]);
-
+    // Serial.print(VectorArray[0], 3);
+    // Serial.print(" ");
+    // Serial.print(VectorArray[1], 3);
+    // Serial.print(" ");
+    // Serial.print(VectorArray[2], 3);
+    // Serial.print(" ");
+    // Serial.print("\n");
     // change l'index
     OldestSampleIndex++;
     if (OldestSampleIndex >= MAXNORMBUFFERSIZE)
@@ -33,19 +40,25 @@ void mineDetection_Callback(void)
       Median = Median + NormBuffer[i];
     }
     Median = Median/MAXNORMBUFFERSIZE;
+    Serial.print(Median, 6);
+    Serial.print("\n");
     // mine detecte?
     if (Median < MINEDETECTIONVALUE )
     {
         mine.mineDetected = 0;
+        mineStatus(mine.mineDetected);
         return;
     }
-    //mine.mineDetected = 1;
+    mine.mineDetected = 1;
+    mineStatus(mine.mineDetected);
+    //Serial.print("mine presente ");
+    //Serial.print("\n");
 
 }
 
 void mineDetection_Init(void)
 {
-  MagSensor_Init();
+  //MagSensor_Init();
   SOFT_TIMER_SetCallback(ID_MINE, &mineDetection_Callback);
   SOFT_TIMER_SetDelay(ID_MINE, 10);
   SOFT_TIMER_SetRepetition(ID_MINE, -1);
