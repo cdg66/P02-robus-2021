@@ -1,7 +1,7 @@
 #include <librobus.h>
 #include <Arduino.h>
 #include <math.h>
-#include "magsensor.hpp"
+//#include "magsensor.hpp"
 // #include <Adafruit_PWMServoDriver.h>
 #include <string.h>
 #include <SoftwareSerial.h>
@@ -12,6 +12,7 @@
 #include "followline.hpp"
 #include "distance.hpp"
 #include "servo.hpp"
+#include "minedetection.hpp"
 #define VERSIONID "Version je veux me tuer\n"
 /* 
 Avant de compiler ajouter les librairies:
@@ -84,6 +85,8 @@ uint8_t chercheCouleur = 0;
 extern float SPEED_SUIVEUR;
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_60X);
 
+
+extern struct _mine mine;
 // // objet pour le Mag sensor
 // Tlv493d Tlv493dMagnetic3DSensor = Tlv493d();
 // objet pour le driver de servo
@@ -164,9 +167,16 @@ void setup() {
   } */
 
   
-  MagSensor_Init();
+  //MagSensor_Init();
   SERVO_Init();
   followLineInit();
+  mineDetection_Init();
+  mineDetection_Enable();
+
+
+
+
+
   // init pid
   SOFT_TIMER_SetCallback(ID_PID, &pid);
   SOFT_TIMER_SetDelay(ID_PID, 100);
@@ -176,12 +186,12 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
-  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+  //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   
   SOFT_TIMER_SetCallback(ID_MICRO, &readMicrophone);
   SOFT_TIMER_SetDelay(ID_MICRO, 20);
   SOFT_TIMER_SetRepetition(ID_MICRO, -1);
-  SOFT_TIMER_Enable(ID_MICRO);
+  //SOFT_TIMER_Enable(ID_MICRO);
 
   SOFT_TIMER_SetCallback(ID_QUILLE, &renverser_quille);
   SOFT_TIMER_SetDelay(ID_QUILLE, 50);
@@ -205,13 +215,21 @@ void setup() {
   pinMode(PIN_LED_GREEN,OUTPUT);
   //tourner(-90);
   //avancer_distance(320);
-  MagSensor_Init();
+  //MagSensor_Init();
 }
 
 
 void loop()
 {
   SOFT_TIMER_Update();
+  if (mine.mineDetected >= 1)
+  {
+    digitalWrite(PIN_LED_BLUE,HIGH);
+  }
+  else
+  {
+    digitalWrite(PIN_LED_BLUE,LOW);
+  }
   //float dist = getSonarRange(0);
   //Serial.println(dist);
   //delay(100);
