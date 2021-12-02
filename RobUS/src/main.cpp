@@ -67,6 +67,8 @@ void setup() {
   BoardInit();
   Serial.write(VERSIONID);
 
+  MOTOR_SetSpeed(0, 1);
+
   manuel_init();
   manuelStart();
   
@@ -74,11 +76,11 @@ void setup() {
 
 
   
-  MagSensor_Init();
-  SERVO_Init();
-  followLineInit();
-  mineDetection_Init();
-  mineDetection_Enable();
+  //MagSensor_Init();
+  //SERVO_Init();
+  //followLineInit();
+  //mineDetection_Init();
+  //mineDetection_Enable();
 
 
 
@@ -112,6 +114,9 @@ void setup() {
   //tourner(-90);
   //avancer_distance(320);
   //MagSensor_Init();
+
+  // test 
+  //avancer_distance(10);
 }
 
 
