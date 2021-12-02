@@ -1,23 +1,35 @@
-#include ""
+#include "drapeau.hpp"
+#include "servo.hpp"
+#include "stdint.h"
 
-drapeaux_Init(void)
+void drapeaux_Init(void)
 {
-    SERVO_SetPWM(uint8_t ServoID, uint16_t pulselen)
-};
-drapeaux_Drop(uint8_t ServoID)
+    
+}
+void drapeaux_Drop(uint8_t ServoID)
 {
-
-};
-drapeaux_Lock(uint8_t ServoID)
+    SERVO_SetPWM(ServoID, SERVOMAX);
+}
+void drapeaux_Lock(uint8_t ServoID)
 {
+    SERVO_SetPWM(ServoID, SERVOMAX/2);
+}
 
-};
-
-drapeaux_DropAll()
+void drapeaux_DropAll()
 {
-
-};
-drapeaux_LockAll()
+    int i;
+for (i = 0; i < 16; i++)
 {
+    SERVO_SetPWM(i, SERVOMAX);
+}
 
-};
+}
+void drapeaux_LockAll()
+{
+    int i;
+    for (i = 0; i < 16; i++)
+    {
+      SERVO_SetPWM(i, SERVOMAX/2);
+    }
+
+}

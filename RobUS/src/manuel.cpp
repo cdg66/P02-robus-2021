@@ -1,6 +1,7 @@
 #include "manuel.hpp"
 #include "LibRobus.h"
 #include "SoftTimer.hpp"
+#include "drapeau.hpp"
 
 String msg;
 float speedG, speedD;
@@ -53,6 +54,8 @@ void lireBluetooth()
 
     if(character == '#')
     {
+      //Serial.print(msg);
+      //Serial.print("\n");
       processBluetooth(msg);
       msg = "";
       return;
@@ -87,7 +90,8 @@ void processBluetooth(String msg)
   drapeau = msg.substring(msg.lastIndexOf(',')+1, msg.length()).toFloat();
   }
   
-
+  //Serial.print(speedG);
+  //Serial.print("\n");
   MOTOR_SetSpeed(LEFT, speedG);
   MOTOR_SetSpeed(RIGHT, speedD);
   
@@ -124,7 +128,7 @@ void modeManuel()
 
 void dropDrapeau(int drapeau)
 {
-
+  drapeaux_Drop(drapeau);
 }
 
 

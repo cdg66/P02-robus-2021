@@ -1,15 +1,16 @@
 #ifndef _DRAPEAUX_H__
 #define _DRAPEAUX_H__
 
+#include "stdint.h"
 // define
 
 // public variables
 
 // public function
-drapeaux_Init(void);
-drapeaux_Drop(uint8_t ServoID);
-drapeaux_Lock(uint8_t ServoID);
+void drapeaux_Init(void);
+void drapeaux_Drop(uint8_t ServoID);
+void drapeaux_Lock(uint8_t ServoID);
 
-drapeaux_DropAll();
-drapeaux_LockAll();
+void drapeaux_DropAll(void);
+void drapeaux_LockAll(void);
 #endif

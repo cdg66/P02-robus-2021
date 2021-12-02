@@ -14,6 +14,7 @@
 #include "servo.hpp"
 #include "minedetection.hpp"
 #include "manuel.hpp"
+#include "drapeau.hpp"
 #define VERSIONID "Version je veux me tuer\n"
 /* 
 Avant de compiler ajouter les librairies:
@@ -67,17 +68,18 @@ void setup() {
   BoardInit();
   Serial.write(VERSIONID);
 
-  MOTOR_SetSpeed(0, 1);
+  //MOTOR_SetSpeed(0, 1);
 
   manuel_init();
   manuelStart();
   
-  Serial.available();
+  //Serial.available();
 
 
   
   //MagSensor_Init();
-  //SERVO_Init();
+  SERVO_Init();
+  drapeaux_LockAll();
   //followLineInit();
   //mineDetection_Init();
   //mineDetection_Enable();
