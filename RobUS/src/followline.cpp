@@ -4,6 +4,7 @@
 #include <math.h>
 #include "SoftTimer.hpp"
 #include "mouvement.hpp"
+#include "minedetection.hpp"
 // private define
 #define PIN_FOLLOW_RED 37
 #define PIN_FOLLOW_YELLOW 38
@@ -159,21 +160,8 @@ void followLineCallback(void)
       MOTOR_SetSpeed(LEFT, speedL);
       MOTOR_SetSpeed(RIGHT, speedR);
     break;
-    case 7: // Rendu sur la feuille de couleur
-      
-      if(chercheCouleur)
-      {
-      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-      CompteurCallback = 1;
-      speedL = 0;
-      speedR = 0;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR); 
-      delay(300);
-      
-      avancer_distance(17);
-      SOFT_TIMER_Enable(ID_COULEUR); 
-      }
+    case 7: // erreur
+      CompteurCallback =1;
 
     break;
     default: // erreur 

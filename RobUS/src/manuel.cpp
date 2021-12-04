@@ -2,10 +2,11 @@
 #include "LibRobus.h"
 #include "SoftTimer.hpp"
 #include "drapeau.hpp"
+#include "main.cpp"
 
 String msg;
 float speedG, speedD;
-int drapeau;
+int drapeau, numDrapeau;
 const unsigned int MAX_INPUT = 50;
 char character;
 
@@ -16,6 +17,7 @@ void sendMessage(String message);
 //Fonction pour initialiser le bluetooth
 void manuel_init()
 {
+  numDrapeau = 4;
   Serial3.begin(115200);
   msg = "";
 
@@ -26,11 +28,14 @@ void manuel_init()
 
 void manuelStart()
 {
+  isModeMan = true;
   SOFT_TIMER_Enable(ID_MANUEL);
+  sendMessage(numDrapeau + "");
 }
 
 void manuelStop()
 {
+  isModeMan = false;
   SOFT_TIMER_Disable(ID_MANUEL);
 }
 
@@ -39,10 +44,28 @@ void manuelStop()
 //Paramètre true si le robot détecte une mine, false sinon
 void mineStatus(bool status)
 {
-  if(status)
-    sendMessage("mine");
+  if(isModeMan)
+  {
+    if(status)
+      sendMessage("mine");
+    else
+      sendMessage("pas mine");
+  }
   else
-    sendMessage("pas mine");
+  {
+    if(status)
+    {
+      SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      MOTOR_SetSpeed(LEFT, 0);
+      MOTOR_SetSpeed(RIGHT, 0);
+      delay(50);
+
+      dropDrapeau(numDrapeau);
+      delay(50);
+      SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+    }
+      
+  }
 }
 
 //Fonction pour le callback appeler au 20ms pour un bon fonctionnement
@@ -95,40 +118,25 @@ void processBluetooth(String msg)
   MOTOR_SetSpeed(LEFT, speedG);
   MOTOR_SetSpeed(RIGHT, speedD);
   
-  if(drapeau >= 0){
+  if(drapeau >= 0)
     dropDrapeau(drapeau);
+  
+}
+
+void dropDrapeau(int drapeau)
+{
+  drapeaux_Drop(4-drapeau);
 
 
     AX_BuzzerON(1976, 67.5);
     delay(75);
-
     AX_BuzzerOFF();
 
     AX_BuzzerON(2637, 472.5);
     delay(525);
     AX_BuzzerOFF();
-
-    
-
-
-    //AX_BuzzerON(444, 500);
-  }
-  
+    numDrapeau = drapeau - 1;
 }
 
-void modeAuto()
-{
-
-}
-
-void modeManuel()
-{
-
-}
-
-void dropDrapeau(int drapeau)
-{
-  drapeaux_Drop(drapeau);
-}
 
 

@@ -52,6 +52,7 @@ Pour les ajouter dans votre projet sur PIO Home
 uint16_t r, g, b, c;
 uint8_t i;
 uint8_t chercheCouleur = 0;
+uint8_t numDrapeau;
 extern float SPEED_SUIVEUR;
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_60X);
 
@@ -63,28 +64,27 @@ float valeurSonar;
 
 
 void readMicrophone();
+void modeManuel();
+void modeAuto();
 
 void setup() {
   BoardInit();
   Serial.write(VERSIONID);
 
-  //MOTOR_SetSpeed(0, 1);
-
   manuel_init();
   manuelStart();
   
-  //Serial.available();
 
 
   
-  //MagSensor_Init();
+  MagSensor_Init();
   SERVO_Init();
   drapeaux_LockAll();
-  //followLineInit();
-  //mineDetection_Init();
-  //mineDetection_Enable();
+  followLineInit();
+  mineDetection_Init();
+  mineDetection_Enable();
 
-
+  numDrapeau=0;
 
 
 
@@ -113,12 +113,6 @@ void setup() {
 
   // pour test 
   pinMode(13,OUTPUT);
-  //tourner(-90);
-  //avancer_distance(320);
-  //MagSensor_Init();
-
-  // test 
-  //avancer_distance(10);
 }
 
 
@@ -161,5 +155,23 @@ void readMicrophone( )
     //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   }
   
+}
+
+
+void modeManuel()
+{
+  SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+  MOTOR_SetSpeed(LEFT,0);
+  MOTOR_SetSpeed(RIGHT, 0);
+
+  manuelStart();
+  mineDetection_Enable();
+}
+
+void modeAuto()
+{
+  manuelStop();
+
+  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
 }
 

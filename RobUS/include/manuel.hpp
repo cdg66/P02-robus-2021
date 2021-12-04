@@ -4,6 +4,7 @@
 // define
 
 // public variables
+boolean isModeMan;
 
 // public function
 //fonction pour le callback, s'occupe de lire les données reçu et ajuste la vitesse des moteur
@@ -18,8 +19,6 @@ void manuelStart();
 void manuelStop();
 
 //fonctions qui devront être changer pour appeler les bonnes fonctions dans le main
-void modeAuto();
-void modeManuel();
 void dropDrapeau(int drapeau);
 
 #endif
