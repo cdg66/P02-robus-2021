@@ -20,13 +20,6 @@ void mineDetection_Callback(void)
     mine.processStatus = 1;
     // lit un sample
     MagSensor_GetData(VectorArray,&NormBuffer[OldestSampleIndex]);
-    // Serial.print(VectorArray[0], 3);
-    // Serial.print(" ");
-    // Serial.print(VectorArray[1], 3);
-    // Serial.print(" ");
-    // Serial.print(VectorArray[2], 3);
-    // Serial.print(" ");
-    // Serial.print("\n");
     // change l'index
     OldestSampleIndex++;
     if (OldestSampleIndex >= MAXNORMBUFFERSIZE)
