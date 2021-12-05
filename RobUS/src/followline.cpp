@@ -105,7 +105,7 @@ void followLineCallback(void)
       CompteurCallback = 1;
       speedL = SPEED_SUIVEUR + 0.2;
       speedR = speedR - SPEED_SUIVEUR;
-      if (speedR < 0)
+      if (speedR > 0)
       {
         speedR = 0;
       }
@@ -123,7 +123,7 @@ void followLineCallback(void)
       CompteurCallback = 1;
       speedL = SPEED_SUIVEUR + 0.2;
       speedR = speedR - SPEED_SUIVEUR;
-      if (speedR < 0)
+      if (speedR > 0)
       {
         speedR = 0;
       }
@@ -132,9 +132,9 @@ void followLineCallback(void)
     break;
     case 4: // on est trop a droite, on tourne beaucoup a gauche
       CompteurCallback = 1;
-      speedR = SPEED_SUIVEUR + 0.2;
+      speedR = SPEED_SUIVEUR + 0.1;
       speedL = speedL - SPEED_SUIVEUR;
-      if (speedL < 0)
+      if (speedL > 0)
       {
         speedL = 0;
       }
@@ -151,8 +151,9 @@ void followLineCallback(void)
     break;
     case 6: // on est un peu a droite, on tourne un peu a gauche
       CompteurCallback = 1;
+      speedR = SPEED_SUIVEUR + 0.1;
       speedL = speedL - SPEED_SUIVEUR;
-      if (speedL < 0)
+      if (speedL > 0)
       {
         speedL = 0;
       }

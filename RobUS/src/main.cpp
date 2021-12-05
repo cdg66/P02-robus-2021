@@ -62,8 +62,7 @@ float valeurSonar;
 
 
 
-void modeManuel();
-void modeAuto();
+
 
 void setup() {
   BoardInit();
@@ -80,7 +79,7 @@ void setup() {
   drapeaux_LockAll();
   followLineInit();
   mineDetection_Init();
-  mineDetection_Enable();
+  //mineDetection_Enable();
 
 
 
@@ -94,7 +93,7 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
-  //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   
 
 
@@ -124,20 +123,5 @@ void loop()
 }
 
 
-void modeManuel()
-{
-  SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-  MOTOR_SetSpeed(LEFT,0);
-  MOTOR_SetSpeed(RIGHT, 0);
 
-  manuelStart();
-  mineDetection_Enable();
-}
-
-void modeAuto()
-{
-  manuelStop();
-
-  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-}
 
