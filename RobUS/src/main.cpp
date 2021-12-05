@@ -52,7 +52,6 @@ Pour les ajouter dans votre projet sur PIO Home
 uint16_t r, g, b, c;
 uint8_t i;
 uint8_t chercheCouleur = 0;
-uint8_t numDrapeau;
 extern float SPEED_SUIVEUR;
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_60X);
 
@@ -61,9 +60,6 @@ extern struct _mine mine;
 
 float valeurSonar;
 
-
-
-void readMicrophone();
 void modeManuel();
 void modeAuto();
 
@@ -84,7 +80,6 @@ void setup() {
   mineDetection_Init();
   mineDetection_Enable();
 
-  numDrapeau=0;
 
 
 
@@ -98,13 +93,6 @@ void setup() {
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-  
-  SOFT_TIMER_SetCallback(ID_MICRO, &readMicrophone);
-  SOFT_TIMER_SetDelay(ID_MICRO, 20);
-  SOFT_TIMER_SetRepetition(ID_MICRO, -1);
-  //SOFT_TIMER_Enable(ID_MICRO);
-
-
 
   pinMode(PIN_LED_RED,OUTPUT);
   pinMode(PIN_LED_YELLOW,OUTPUT);
@@ -129,34 +117,6 @@ void loop()
   }
 
 }
-
-
-void readMicrophone( ) 
-{ /* function readMicrophone : allume les led quand le sifflet est détecté*/
-  static int mic_son_val,mic_amb_val;
-  mic_son_val = analogRead(micSon);
-  mic_amb_val = analogRead(micAmb);
-  int difference_son = mic_son_val - mic_amb_val ; 
-
-  //Serial.print(F("mic 5k ")); Serial.println(mic_son_val); // affiche les valeurs analog pour le debugguage
-  //Serial.print(F("mic amb ")); Serial.println(mic_amb_val);
-  Serial.print(F("mic diff ")); Serial.println(difference_son);
-  if (difference_son >= 60) 
-  {
-    //SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-    //Serial.println("mic detected"); 
-    //Ouverture du voltage des LEDS
-    digitalWrite(PIN_LED_RED, HIGH);
-    digitalWrite(PIN_LED_YELLOW, HIGH);
-    digitalWrite(PIN_LED_BLUE, HIGH);
-    SOFT_TIMER_Enable(ID_QUILLE);
-    //compteurCallback++;
-    SOFT_TIMER_Disable(ID_MICRO);
-    //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-  }
-  
-}
-
 
 void modeManuel()
 {
