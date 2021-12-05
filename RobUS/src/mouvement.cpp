@@ -5,8 +5,8 @@
 #include "SoftTimer.hpp"
 // value of encoder needed for avancer() and pid()
 int32_t totalG, totalD;
-float vitesseD = 0.35;
-float vitesseG = 0.35;
+float vitesseD = -0.35;
+float vitesseG = -0.35;
 
 /*------------------------------------------------- tourner ----------
 |  Function tourner

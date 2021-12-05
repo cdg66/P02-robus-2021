@@ -30,7 +30,7 @@ void manuelStart()
 {
   isModeMan = true;
   SOFT_TIMER_Enable(ID_MANUEL);
-  sendMessage(numDrapeau + "");
+  //sendMessage(numDrapeau + "");
 }
 
 void manuelStop()
@@ -93,7 +93,7 @@ void lireBluetooth()
 void sendMessage(String message)
 {
   message += "\n";
-  for(int i = 0; i < message.length(); i++)
+  for(unsigned int i = 0; i < message.length(); i++)
   {
     Serial3.write(message.charAt(i));
   }

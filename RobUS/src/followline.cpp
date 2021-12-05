@@ -11,7 +11,7 @@
 #define PIN_FOLLOW_BLUE 39
 #define PIN_FOLLOW_INTERSECT 40
 // private variables
-float SPEED_SUIVEUR = 0.4;
+float SPEED_SUIVEUR = -0.4;
 // private function prototype
 uint8_t getFollowLineValue();
 
