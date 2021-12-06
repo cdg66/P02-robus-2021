@@ -11,7 +11,7 @@
 #define PIN_FOLLOW_BLUE 39
 #define PIN_FOLLOW_INTERSECT 40
 // private variables
-float SPEED_SUIVEUR = -0.4;
+float SPEED_SUIVEUR = -0.25;
 // private function prototype
 uint8_t getFollowLineValue();
 
@@ -88,91 +88,57 @@ void followLineCallback(void)
   //Serial.print("\n");
   switch (ValeurSuiveur)
   {
-    case 0: // in a pas de ligne on avance pendant x temps. Apres on arrete.
-      speedL = SPEED_SUIVEUR;
-      speedR = SPEED_SUIVEUR;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
-      if (CompteurCallback >= 500)
-      {
-        speedL = 0;
-        speedR = 0;
-        MOTOR_SetSpeed(LEFT, speedL);
-        MOTOR_SetSpeed(RIGHT, speedR);
-      }
-    break;
-    case 1: // on est trop a gauche on tourne beaucoup a droite
-      CompteurCallback = 1;
-      speedL = SPEED_SUIVEUR + 0.2;
-      speedR = speedR - SPEED_SUIVEUR;
-      if (speedR > 0)
-      {
-        speedR = 0;
-      }
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
-    break;
-    case 2: // on avance 
-      CompteurCallback = 1;
-      speedL = SPEED_SUIVEUR;
-      speedR = SPEED_SUIVEUR;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
-    break;
-    case 3: // on est un peu a gauche on tourne un peu a droite
-      CompteurCallback = 1;
-      speedL = SPEED_SUIVEUR + 0.2;
-      speedR = speedR - SPEED_SUIVEUR;
-      if (speedR > 0)
-      {
-        speedR = 0;
-      }
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
-    break;
-    case 4: // on est trop a droite, on tourne beaucoup a gauche
-      CompteurCallback = 1;
-      speedR = SPEED_SUIVEUR + 0.1;
-      speedL = speedL - SPEED_SUIVEUR;
-      if (speedL > 0)
-      {
-        speedL = 0;
-      }
-      //speedR = speedR - SPEED_SUIVEUR;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
-    break;
-    case 5: // erreur gauche et droit sont actif mais pas celui du centre 
-      CompteurCallback = 1;
-     /*  speedL = 0;
+  case 0: // pas de ligne
+    speedL = SPEED_SUIVEUR;
+    speedR = SPEED_SUIVEUR;
+    //MOTOR_SetSpeed(LEFT, speedL);
+    //MOTOR_SetSpeed(RIGHT, speedR);
+    if (CompteurCallback >= 500)
+    {
+      speedL = 0;
       speedR = 0;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR); */
+      //MOTOR_SetSpeed(LEFT, speedL);
+      //MOTOR_SetSpeed(RIGHT, speedR);
+    }
     break;
-    case 6: // on est un peu a droite, on tourne un peu a gauche
-      CompteurCallback = 1;
-      speedR = SPEED_SUIVEUR + 0.1;
-      speedL = speedL - SPEED_SUIVEUR;
-      if (speedL > 0)
-      {
-        speedL = 0;
-      }
-      //speedR = speedR - SPEED_SUIVEUR;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR);
+  
+  case 2: // ligne jaune
+    CompteurCallback = 1;
+    speedL = SPEED_SUIVEUR;
+    speedR = SPEED_SUIVEUR;
+    //MOTOR_SetSpeed(LEFT, speedL);
+    //MOTOR_SetSpeed(RIGHT, speedR);
+    /* code */
     break;
-    case 7: // erreur
-      CompteurCallback =1;
-
+  
+  case 1:  // trop a gauche
+  case 3:
+    CompteurCallback = 1;
+    speedL = 0;
+    speedR = SPEED_SUIVEUR;
+    //MOTOR_SetSpeed(LEFT, speedL);
+    //MOTOR_SetSpeed(RIGHT, speedR);
     break;
-    default: // erreur 
-      CompteurCallback = 1;
-      /*speedL = 0;
-      speedR = 0;
-      MOTOR_SetSpeed(LEFT, speedL);
-      MOTOR_SetSpeed(RIGHT, speedR); */
+  
+  case 4: //trop a droite
+  case 6:
+    speedR = 0;
+    speedL = SPEED_SUIVEUR;
+    //MOTOR_SetSpeed(RIGHT, speedR);
+    //MOTOR_SetSpeed(LEFT, speedL);
+    break;
+  
+  
+  default: // erreur
+    CompteurCallback = 1;
+    speedL = 0;
+    speedR = 0;
+    //MOTOR_SetSpeed(LEFT, speedL);
+    //MOTOR_SetSpeed(RIGHT, speedR); 
     break;
   }
+  MOTOR_SetSpeed(LEFT, speedL);
+  MOTOR_SetSpeed(RIGHT, speedR);
 }
 
 
