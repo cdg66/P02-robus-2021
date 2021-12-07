@@ -12,6 +12,7 @@
 #define PIN_FOLLOW_INTERSECT 40
 // private variables
 float SPEED_SUIVEUR = -0.25;
+float SPEED_TOURNER = -0.3;
 // private function prototype
 uint8_t getFollowLineValue();
 
@@ -89,8 +90,8 @@ void followLineCallback(void)
   switch (ValeurSuiveur)
   {
   case 0: // pas de ligne
-    speedL = SPEED_SUIVEUR;
-    speedR = SPEED_SUIVEUR;
+    //speedL = SPEED_SUIVEUR;
+    //speedR = SPEED_SUIVEUR;
     //MOTOR_SetSpeed(LEFT, speedL);
     //MOTOR_SetSpeed(RIGHT, speedR);
     if (CompteurCallback >= 500)
@@ -112,18 +113,51 @@ void followLineCallback(void)
     break;
   
   case 1:  // trop a gauche
-  case 3:
+    CompteurCallback = 1;
+    speedL = 0;
+    speedR = SPEED_TOURNER;
+    //speedR = speedR - 0.1;
+    //if (speedR < -1)
+    //{
+    //  speedR = -1;
+    //}
+    //MOTOR_SetSpeed(LEFT, speedL);
+    //MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+  case 3: //gauche
     CompteurCallback = 1;
     speedL = 0;
     speedR = SPEED_SUIVEUR;
+    //speedR = speedR - 0.1;
+    //if (speedR < -1)
+    //{
+    //  speedR = -1;
+    //}
     //MOTOR_SetSpeed(LEFT, speedL);
     //MOTOR_SetSpeed(RIGHT, speedR);
     break;
   
   case 4: //trop a droite
-  case 6:
+    CompteurCallback = 1;
     speedR = 0;
     speedL = SPEED_SUIVEUR;
+    //speedR = speedR - 0.1;
+    //if (speedR < -1)
+    //{
+    //  speedR = -1;
+    //}
+    //MOTOR_SetSpeed(LEFT, speedL);
+    //MOTOR_SetSpeed(RIGHT, speedR);
+    break;
+  case 6:
+    CompteurCallback = 1;
+    speedR = 0;
+    speedL = SPEED_TOURNER;
+    //speedL = speedL - 0.1;
+    //if (speedL < -1)
+    //{
+    //  speedL = -1;
+    //}
     //MOTOR_SetSpeed(RIGHT, speedR);
     //MOTOR_SetSpeed(LEFT, speedL);
     break;
