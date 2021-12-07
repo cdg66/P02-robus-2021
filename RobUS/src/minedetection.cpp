@@ -15,7 +15,7 @@ uint8_t OldestSampleIndex = 0;
 
 void mineDetection_Callback(void)
 {
-    float Median;
+    float Median = 0;
     int i;
     mine.processStatus = 1;
     // lit un sample
@@ -44,6 +44,7 @@ void mineDetection_Callback(void)
     }
     mine.mineDetected = 1;
     mineStatus(mine.mineDetected);
+    mineDetection_Disable();
     //Serial.print("mine presente ");
     //Serial.print("\n");
 
@@ -53,7 +54,7 @@ void mineDetection_Init(void)
 {
   //MagSensor_Init();
   SOFT_TIMER_SetCallback(ID_MINE, &mineDetection_Callback);
-  SOFT_TIMER_SetDelay(ID_MINE, 10);
+  SOFT_TIMER_SetDelay(ID_MINE, 100);
   SOFT_TIMER_SetRepetition(ID_MINE, -1);
   //SOFT_TIMER_Enable(ID_MINE);
 }
@@ -65,6 +66,13 @@ void mineDetection_Enable(void)
 void mineDetection_Disable(void)
 {
     SOFT_TIMER_Disable(ID_MINE);
+    mine.processStatus = 0;
+    OldestSampleIndex = 0;
+    for(int i = 0; i > MAXNORMBUFFERSIZE; i++)
+    {
+        NormBuffer[i] = 0;
+    }
+    
 }
 
 

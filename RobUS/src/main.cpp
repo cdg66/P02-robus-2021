@@ -79,7 +79,7 @@ void setup() {
   drapeaux_LockAll();
   followLineInit();
   mineDetection_Init();
-  //mineDetection_Enable();
+  mineDetection_Enable();
 
 
 
@@ -93,7 +93,7 @@ void setup() {
   SOFT_TIMER_SetCallback(ID_SUIVEURDELIGNE, &followLineCallback);
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
-  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
+  //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
   
 
 

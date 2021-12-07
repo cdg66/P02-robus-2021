@@ -46,7 +46,7 @@ void MagSensor_GetData(float VectorArray[3], float *Norm)
   sum = tempVector[0]+tempVector[1]+tempVector[2];
   *Norm = sqrt((double)sum);
   //Serial.print("Norm: ");
-  //Serial.print(norm, 6);
+  //Serial.print(*Norm, 6);
   //Serial.print("\n ");
   //sum = 0;
   //delay(1000);

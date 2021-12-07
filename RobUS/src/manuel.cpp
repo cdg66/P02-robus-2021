@@ -5,6 +5,7 @@
 #include "minedetection.hpp"
 #include "servo.hpp"
 
+
 String msg;
 float speedG, speedD;
 int drapeau, numDrapeau;
@@ -46,6 +47,7 @@ void manuelStop()
 //Paramètre true si le robot détecte une mine, false sinon
 void mineStatus(bool status)
 {
+  //mineDetection_Disable();
   if(isModeMan)
   {
     if(status)
@@ -57,17 +59,29 @@ void mineStatus(bool status)
   {
     if(status)
     {
+      //mineDetection_Disable();
       SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      MOTOR_SetSpeed(LEFT, -0.3);
+      MOTOR_SetSpeed(RIGHT, -0.3);
+
+      delay(1000);
       MOTOR_SetSpeed(LEFT, 0);
       MOTOR_SetSpeed(RIGHT, 0);
-      delay(50);
 
-      dropDrapeau(numDrapeau);
+      
+      
+      //avancer_timer(10);
+      
       delay(50);
+      dropDrapeau(numDrapeau);   
+      //delay(50);
+      //mineDetection_Enable();
+      //SOFT_TIMER_Enable(ID_MINE);
       SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
     }
       
   }
+  mineDetection_Enable();
 }
 
 //Fonction pour le callback appeler au 20ms pour un bon fonctionnement
