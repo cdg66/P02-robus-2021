@@ -31,6 +31,7 @@ void mineDetection_Callback(void)
     for (i = 0; i < MAXNORMBUFFERSIZE; i++)
     {
       Median = Median + NormBuffer[i];
+      
     }
     Median = Median/MAXNORMBUFFERSIZE;
     Serial.print(Median, 6);
@@ -44,7 +45,7 @@ void mineDetection_Callback(void)
     }
     mine.mineDetected = 1;
     mineStatus(mine.mineDetected);
-    mineDetection_Disable();
+    //mineDetection_Disable();
     //Serial.print("mine presente ");
     //Serial.print("\n");
 

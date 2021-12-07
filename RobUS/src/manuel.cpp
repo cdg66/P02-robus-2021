@@ -39,7 +39,7 @@ void manuelStart()
 void manuelStop()
 {
   isModeMan = false;
-  SOFT_TIMER_Disable(ID_MANUEL);
+  //SOFT_TIMER_Disable(ID_MANUEL);
 }
 
 //Fonction qui envoie le bon message à l'application
@@ -64,7 +64,7 @@ void mineStatus(bool status)
       MOTOR_SetSpeed(LEFT, -0.3);
       MOTOR_SetSpeed(RIGHT, -0.3);
 
-      delay(1000);
+      //delay(1000);
       MOTOR_SetSpeed(LEFT, 0);
       MOTOR_SetSpeed(RIGHT, 0);
 
@@ -137,8 +137,12 @@ void processBluetooth(String msg)
   
   //Serial.print(speedG);
   //Serial.print("\n");
-  MOTOR_SetSpeed(RIGHT, speedG*-1);
-  MOTOR_SetSpeed(LEFT, speedD*-1);
+  if(isModeMan)
+  {
+    MOTOR_SetSpeed(RIGHT, speedG*-1);
+    MOTOR_SetSpeed(LEFT, speedD*-1);
+  }
+  
   
   if(drapeau >= 0)
     dropDrapeau(drapeau);
