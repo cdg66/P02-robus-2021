@@ -4,7 +4,7 @@
 #include "stdint.h"
 // define
 #define MAXNORMBUFFERSIZE 10
-#define MINEDETECTIONVALUE 0.3
+#define MINEDETECTIONVALUE 0.4
 
 // public variables
 struct _mine

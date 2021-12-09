@@ -15,7 +15,7 @@
 #include "minedetection.hpp"
 #include "manuel.hpp"
 #include "drapeau.hpp"
-#define VERSIONID "Version je veux me tuer\n"
+#define VERSIONID "Finale\n"
 /* 
 Avant de compiler ajouter les librairies:
 - Adafruit PWM Servo Driver Library 
@@ -60,8 +60,11 @@ extern struct _mine mine;
 
 float valeurSonar;
 
+
+
 void modeManuel();
 void modeAuto();
+
 
 void setup() {
   BoardInit();
@@ -94,6 +97,7 @@ void setup() {
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
 
+
   pinMode(PIN_LED_RED,OUTPUT);
   pinMode(PIN_LED_YELLOW,OUTPUT);
   pinMode(PIN_LED_BLUE,OUTPUT);
@@ -118,6 +122,7 @@ void loop()
 
 }
 
+
 void modeManuel()
 {
   SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
@@ -132,6 +137,5 @@ void modeAuto()
 {
   manuelStop();
 
-  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-}
+
 

@@ -21,7 +21,7 @@ void drapeaux_Lock(uint8_t ServoID)
 void drapeaux_DropAll()
 {
     int i;
-for (i = 0; i < 16; i++)
+for (i = 0; i < 15; i++)
 {
     SERVO_SetPWM(i, SERVO_OUVERT);
 }

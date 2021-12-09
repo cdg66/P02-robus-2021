@@ -78,3 +78,13 @@ void SERVO_SetPWM(uint8_t ServoID, uint16_t pulselen) // pulselen < 4096
   }
   pwm.setPWM(ServoID,pulselen , 0);
 }
+
+void tourelleGauche()
+{
+  
+}
+
+void tourelleDroite()
+{
+
+}

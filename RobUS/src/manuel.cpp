@@ -2,13 +2,16 @@
 #include "LibRobus.h"
 #include "SoftTimer.hpp"
 #include "drapeau.hpp"
-#include "main.cpp"
+#include "minedetection.hpp"
+#include "servo.hpp"
+
 
 String msg;
 float speedG, speedD;
 int drapeau, numDrapeau;
 const unsigned int MAX_INPUT = 50;
 char character;
+bool isModeMan;
 
 
 void processBluetooth(String msg);
@@ -21,7 +24,7 @@ void manuel_init()
   Serial3.begin(115200);
   msg = "";
 
-   SOFT_TIMER_SetCallback(ID_MANUEL, &lireBluetooth);
+  SOFT_TIMER_SetCallback(ID_MANUEL, &lireBluetooth);
   SOFT_TIMER_SetDelay(ID_MANUEL, 20);
   SOFT_TIMER_SetRepetition(ID_MANUEL, -1);
 }
@@ -30,13 +33,13 @@ void manuelStart()
 {
   isModeMan = true;
   SOFT_TIMER_Enable(ID_MANUEL);
-  sendMessage(numDrapeau + "");
+  //sendMessage(numDrapeau + "");
 }
 
 void manuelStop()
 {
   isModeMan = false;
-  SOFT_TIMER_Disable(ID_MANUEL);
+  //SOFT_TIMER_Disable(ID_MANUEL);
 }
 
 //Fonction qui envoie le bon message à l'application
@@ -44,6 +47,7 @@ void manuelStop()
 //Paramètre true si le robot détecte une mine, false sinon
 void mineStatus(bool status)
 {
+  //mineDetection_Disable();
   if(isModeMan)
   {
     if(status)
@@ -55,17 +59,29 @@ void mineStatus(bool status)
   {
     if(status)
     {
+      //mineDetection_Disable();
       SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+      MOTOR_SetSpeed(LEFT, -0.3);
+      MOTOR_SetSpeed(RIGHT, -0.3);
+
+      //delay(1000);
       MOTOR_SetSpeed(LEFT, 0);
       MOTOR_SetSpeed(RIGHT, 0);
-      delay(50);
 
-      dropDrapeau(numDrapeau);
+      
+      
+      //avancer_timer(10);
+      
       delay(50);
+      dropDrapeau(numDrapeau);   
+      //delay(50);
+      //mineDetection_Enable();
+      //SOFT_TIMER_Enable(ID_MINE);
       SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
     }
       
   }
+  mineDetection_Enable();
 }
 
 //Fonction pour le callback appeler au 20ms pour un bon fonctionnement
@@ -93,7 +109,7 @@ void lireBluetooth()
 void sendMessage(String message)
 {
   message += "\n";
-  for(int i = 0; i < message.length(); i++)
+  for(unsigned int i = 0; i < message.length(); i++)
   {
     Serial3.write(message.charAt(i));
   }
@@ -107,6 +123,12 @@ void processBluetooth(String msg)
     modeAuto();
   else if(msg.equals("man"))
     modeManuel();
+  else if(msg.equals("gauche"))
+    SERVO_SetPWM(ID_TOURELLE, TOURELLE_GAUCHE);
+  else if(msg.equals("droite"))
+    SERVO_SetPWM(ID_TOURELLE, TOURELLE_DROITE); 
+  else if(msg.equals("centre"))
+    SERVO_SetPWM(ID_TOURELLE, TOURELLE_CENTRE);  
   else{    
   speedG = msg.substring(0, msg.indexOf(',')).toFloat();
   speedD = msg.substring(msg.indexOf(',')+1, msg.lastIndexOf(',')).toFloat();
@@ -115,8 +137,12 @@ void processBluetooth(String msg)
   
   //Serial.print(speedG);
   //Serial.print("\n");
-  MOTOR_SetSpeed(LEFT, speedG);
-  MOTOR_SetSpeed(RIGHT, speedD);
+  if(isModeMan)
+  {
+    MOTOR_SetSpeed(RIGHT, speedG*-1);
+    MOTOR_SetSpeed(LEFT, speedD*-1);
+  }
+  
   
   if(drapeau >= 0)
     dropDrapeau(drapeau);
@@ -136,6 +162,24 @@ void dropDrapeau(int drapeau)
     delay(525);
     AX_BuzzerOFF();
     numDrapeau = drapeau - 1;
+}
+
+
+void modeManuel()
+{
+  SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+  MOTOR_SetSpeed(LEFT,0);
+  MOTOR_SetSpeed(RIGHT, 0);
+
+  manuelStart();
+  mineDetection_Enable();
+}
+
+void modeAuto()
+{
+  manuelStop();
+
+  SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
 }
 
 
