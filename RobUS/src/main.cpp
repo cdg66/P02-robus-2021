@@ -62,6 +62,8 @@ float valeurSonar;
 
 
 
+void modeManuel();
+void modeAuto();
 
 
 void setup() {
@@ -94,8 +96,6 @@ void setup() {
   SOFT_TIMER_SetDelay(ID_SUIVEURDELIGNE, 2);
   SOFT_TIMER_SetRepetition(ID_SUIVEURDELIGNE, -1);
   //SOFT_TIMER_Enable(ID_SUIVEURDELIGNE);
-  
-
 
 
   pinMode(PIN_LED_RED,OUTPUT);
@@ -122,6 +122,20 @@ void loop()
 
 }
 
+
+void modeManuel()
+{
+  SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
+  MOTOR_SetSpeed(LEFT,0);
+  MOTOR_SetSpeed(RIGHT, 0);
+
+  manuelStart();
+  mineDetection_Enable();
+}
+
+void modeAuto()
+{
+  manuelStop();
 
 
 

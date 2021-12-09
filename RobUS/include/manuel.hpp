@@ -6,6 +6,10 @@
 // public variables
 
 
+=======
+bool isModeMan;
+
+
 // public function
 //fonction pour le callback, s'occupe de lire les données reçu et ajuste la vitesse des moteur
 void lireBluetooth();
