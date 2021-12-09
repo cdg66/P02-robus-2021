@@ -15,7 +15,7 @@
 #include "minedetection.hpp"
 #include "manuel.hpp"
 #include "drapeau.hpp"
-#define VERSIONID "Version je veux me tuer\n"
+#define VERSIONID "Finale\n"
 /* 
 Avant de compiler ajouter les librairies:
 - Adafruit PWM Servo Driver Library 
