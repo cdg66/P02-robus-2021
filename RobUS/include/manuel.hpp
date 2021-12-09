@@ -6,8 +6,7 @@
 // public variables
 
 
-=======
-bool isModeMan;
+
 
 
 // public function

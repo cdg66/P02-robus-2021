@@ -123,19 +123,6 @@ void loop()
 }
 
 
-void modeManuel()
-{
-  SOFT_TIMER_Disable(ID_SUIVEURDELIGNE);
-  MOTOR_SetSpeed(LEFT,0);
-  MOTOR_SetSpeed(RIGHT, 0);
-
-  manuelStart();
-  mineDetection_Enable();
-}
-
-void modeAuto()
-{
-  manuelStop();
 
 
 
